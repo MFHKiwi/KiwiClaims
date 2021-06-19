@@ -1,0 +1,17 @@
+name: KiwiClaims
+version: 1.0
+main: me.MFHKiwi.KiwiClaims.KiwiClaims
+description: A claims plugin for CraftBukkit 1060.
+author: MFHKiwi
+commands:
+   kc:
+      description: Interact with KiwiClaims
+      usage: /kc <argument>
+      aliases: [kiwiclaims, kclaims, claims, claim]
+permissions:
+   kc.use:
+      description: Use /kc
+      default: not-op
+   kc.admin:
+      description: Use admin functions
+      default: op
