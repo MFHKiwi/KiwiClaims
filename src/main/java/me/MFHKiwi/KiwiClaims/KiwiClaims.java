@@ -13,16 +13,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class KiwiClaims extends JavaPlugin {
 	public final Logger log = Logger.getLogger("Minecraft");
-	public PluginDescriptionFile desc;
-	public PluginManager pm;
-	public List<KClaim> claims = new ArrayList<KClaim>();
+	private PluginDescriptionFile desc;
+	private PluginManager pm;
+	private final List<KClaim> claims = new ArrayList<KClaim>();
+	private final KBlockListener block_listener = new KBlockListener(this);
+	private final KPlayerListener player_listener = new KPlayerListener(this);
 	
 	public void onEnable() {
 		this.desc = this.getDescription();
 		this.pm = Bukkit.getPluginManager();
-		getCommand("kc").setExecutor(new KCommand(this));
-		pm.registerEvent(Event.Type.BLOCK_BREAK, (Listener) new KBlockListener(this), Event.Priority.High, (Plugin) this);
-		pm.registerEvent(Event.Type.PLAYER_INTERACT, (Listener) new KPlayerListener(this), Event.Priority.High, (Plugin) this);
+		pm.registerEvent(Event.Type.BLOCK_BREAK, (Listener) block_listener, Event.Priority.High, (Plugin) this);
+		pm.registerEvent(Event.Type.BLOCK_PLACE, (Listener) block_listener, Event.Priority.High, (Plugin) this);
+		pm.registerEvent(Event.Type.PLAYER_INTERACT, (Listener) player_listener, Event.Priority.High, (Plugin) this);
+		getCommand("kc").setExecutor(new KCommand(this, player_listener));
 		log.info("[" + desc.getFullName() + "] enabled.");
 	}
 	
