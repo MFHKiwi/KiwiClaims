@@ -31,6 +31,10 @@ public class KClaim {
 		this.owner_name = owner_name;
 	}
 	
+	public KClaim(KSelection selection) {
+		this(selection.getMin(), selection.getMax(), selection.getPlayerName());
+	}
+	
 	public boolean contains(Location location) {
 		if (!location.getWorld().equals(this.min.getWorld())) {
 			return false;
@@ -64,7 +68,21 @@ public class KClaim {
 		return this.trusted_names;
 	}
 	
-	public void addTrusted(String name) {
-		this.trusted_names.add(name);
+	public boolean addTrusted(String name) {
+		if (!this.trusted_names.contains(name) ) {
+			this.trusted_names.add(name);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean removeTrusted(String name) {
+		if (this.trusted_names.contains(name)) {
+			this.trusted_names.remove(name);
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

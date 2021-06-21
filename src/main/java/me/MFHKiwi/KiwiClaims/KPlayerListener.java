@@ -33,13 +33,15 @@ public class KPlayerListener extends PlayerListener {
 					}
 					if (selection.getMin() != null && selection.getMax() != null) {
 						if (selection.getMin().getWorld().equals(selection.getMax().getWorld())) {
-							plugin.getClaims().add(new KClaim(selection.getMin(), selection.getMax(), selection.getPlayerName()));
+							plugin.getClaims().add(new KClaim(selection));
 							it.remove();
+							player.sendMessage("Claim created");
 						} else {
 							event.getPlayer().sendMessage("Selections must be in the same world!");
+							it.remove();
 						}
-					} else {}
-				} else {}
+					}
+				}
 			}
 		}
 	}

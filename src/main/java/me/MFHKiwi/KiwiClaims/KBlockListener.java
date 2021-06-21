@@ -15,31 +15,29 @@ public class KBlockListener extends BlockListener {
 		this.plugin = plugin;
 	}
 	
-	public void onBlockBreak(BlockBreakEvent event) {
-		Location block_location = event.getBlock().getLocation();
-		Player player = event.getPlayer();
+	public boolean commonHandler(Location block_location, Player player) {
 		String player_name = player.getName();
 		List<KClaim> claims = plugin.getClaims();
 		for (KClaim claim : claims) {
-			if ((!player_name.equals(claim.getOwnerName())) && (!claim.getTrusted().contains(player_name))) {
-				if (claim.contains(block_location)) {
-					event.setCancelled(true);
+			if (claim.contains(block_location)) {
+				if (!(player_name.equals(claim.getOwnerName())) && 
+					!(claim.getTrusted().contains(player_name))) {
+					return true;
 				}
 			}
+		}
+		return false;
+	}
+		
+	public void onBlockBreak(BlockBreakEvent event) {
+		if (commonHandler(event.getBlock().getLocation(), event.getPlayer())) {
+			event.setCancelled(true);
 		}
 	}
 	
 	public void onBlockPlace(BlockPlaceEvent event) {
-		Location block_location = event.getBlock().getLocation();
-		Player player = event.getPlayer();
-		String player_name = player.getName();
-		List<KClaim> claims = plugin.getClaims();
-		for (KClaim claim : claims) {
-			if ((!player_name.equals(claim.getOwnerName())) && (!claim.getTrusted().contains(player_name))) {
-				if (claim.contains(block_location)) {
-					event.setCancelled(true);
-				}
-			}
+		if (commonHandler(event.getBlock().getLocation(), event.getPlayer())) {
+			event.setCancelled(true);
 		}
 	}
 }
