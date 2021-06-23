@@ -30,14 +30,18 @@ public class KBlockListener extends BlockListener {
 	}
 		
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (commonHandler(event.getBlock().getLocation(), event.getPlayer())) {
-			event.setCancelled(true);
+		if (!event.getPlayer().hasPermission("kc.admin")) {
+			if (commonHandler(event.getBlock().getLocation(), event.getPlayer())) {
+				event.setCancelled(true);
+			}
 		}
 	}
 	
 	public void onBlockPlace(BlockPlaceEvent event) {
-		if (commonHandler(event.getBlock().getLocation(), event.getPlayer())) {
-			event.setCancelled(true);
+		if (!event.getPlayer().hasPermission("kc.admin")) {
+			if (commonHandler(event.getBlock().getLocation(), event.getPlayer())) {
+				event.setCancelled(true);
+			}
 		}
 	}
 }

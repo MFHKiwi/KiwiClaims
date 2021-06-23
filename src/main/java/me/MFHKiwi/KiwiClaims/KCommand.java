@@ -27,17 +27,17 @@ public class KCommand implements CommandExecutor {
 				} else if (args[0].equalsIgnoreCase("trust")) {
 					for (KClaim claim : claims) {
 						if (claim.contains(player.getLocation())) {
-							if (claim.getOwnerName().equals(player.getName())) {
+							if (claim.getOwnerName().equals(player.getName()) || player.hasPermission("kc.admin")) {
 								if (claims.get(claims.indexOf(claim)).addTrusted(args[1])) {
 									sender.sendMessage("Successfull trusted");
 								} else {
 									sender.sendMessage("That player is already trusted in this claim");
 								}
 							} else {
-								// to do
+								sender.sendMessage("You must be owner of the claim to do that");
 							}
 						} else {
-							// to do
+							sender.sendMessage("You must be standing in a claim to do that");
 						}
 					}
 				} else if (args[0].equalsIgnoreCase("untrust")) {
