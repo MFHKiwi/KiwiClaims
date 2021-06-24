@@ -29,4 +29,17 @@ public class KSelection {
 	public void setMax(Location max) {
 		this.max = max;
 	}
+	
+	public boolean overlaps(Location min, Location max) {
+		if (this.min.getBlockX() < max.getBlockX() && this.max.getBlockX() > min.getBlockX() &&
+			this.min.getBlockZ() < max.getBlockZ() && this.max.getBlockZ() > min.getBlockZ()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean overlaps(KClaim claim) {
+		return overlaps(claim.getMinLocation(), claim.getMaxLocation());
+	}
 }

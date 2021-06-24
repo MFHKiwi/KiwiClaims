@@ -25,6 +25,9 @@ public class KCommand implements CommandExecutor {
 					sender.sendMessage("Incorrect usage. See at /kc help.");
 					return true;
 				}
+				if (args[0].equalsIgnoreCase("help" )) {
+					
+				}
 				if (args[0].equalsIgnoreCase("claim")) {
 					listener.getSelectionList().add(new KSelection(player.getName()));
 					sender.sendMessage("Punch the opposite corners of the claim you wish to create in order to make your selection");

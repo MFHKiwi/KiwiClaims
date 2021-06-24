@@ -49,7 +49,7 @@ public class KBlockListener extends BlockListener {
 	
 	public void onBlockFlow(BlockFromToEvent event) {
 		for (KClaim claim : claims) {
-			if (claim.contains(event.getToBlock().getLocation()) && !claim.contains(event.getBlock().getLocation())) {
+			if (claim.contains(event.getToBlock().getLocation()) && !(claim.contains(event.getBlock().getLocation()))) {
 				event.setCancelled(true);
 			}
 		}
