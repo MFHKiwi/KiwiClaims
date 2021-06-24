@@ -11,7 +11,7 @@ commands:
 permissions:
    kc.use:
       description: Use /kc
-      default: not-op
+      default: true
    kc.admin:
       description: Use admin functions
       default: op

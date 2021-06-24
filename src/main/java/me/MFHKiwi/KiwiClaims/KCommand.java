@@ -17,19 +17,23 @@ public class KCommand implements CommandExecutor {
 	}
 	
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		Player player = (Player) sender;
-		List<KClaim> claims = plugin.getClaims();
 		if (sender instanceof Player) {
-			//if (sender.hasPermission("kc.use")) {
+			Player player = (Player) sender;
+			List<KClaim> claims = plugin.getClaims();
+			if (sender.hasPermission("kc.use")) {
+				if (args.length < 1) {
+					sender.sendMessage("Incorrect usage. See at /kc help.");
+					return true;
+				}
 				if (args[0].equalsIgnoreCase("claim")) {
 					listener.getSelectionList().add(new KSelection(player.getName()));
 					sender.sendMessage("Punch the opposite corners of the claim you wish to create in order to make your selection");
 				} else if (args[0].equalsIgnoreCase("trust")) {
 					for (KClaim claim : claims) {
 						if (claim.contains(player.getLocation())) {
-							if (claim.getOwnerName().equals(player.getName()) || player.hasPermission("kc.admin")) {
+							if (claim.getOwnerName().equals(player.getName()) || sender.hasPermission("kc.admin")) {
 								if (claims.get(claims.indexOf(claim)).addTrusted(args[1])) {
-									sender.sendMessage("Successfull trusted");
+									sender.sendMessage("Successfully trusted");
 								} else {
 									sender.sendMessage("That player is already trusted in this claim");
 								}
@@ -50,16 +54,18 @@ public class KCommand implements CommandExecutor {
 									sender.sendMessage("That player is not trusted in this claim");
 								}
 							} else {
-								// to do
+								sender.sendMessage("You must be owner of the claim to do that");
 							}
 						} else {
-							// to do
+							sender.sendMessage("You must be standing in a claim to do that");
 						}
 					}
 				}
-			/*} else {
+			} else {
 				sender.sendMessage("You need the permission node 'kc.use' to use this command.");
-			}*/
+			}
+		} else {
+			sender.sendMessage("This command can only be used in-game");
 		}
 		return true;
 	}

@@ -24,6 +24,7 @@ public class KiwiClaims extends JavaPlugin {
 		this.pm = Bukkit.getPluginManager();
 		pm.registerEvent(Event.Type.BLOCK_BREAK, (Listener) block_listener, Event.Priority.High, (Plugin) this);
 		pm.registerEvent(Event.Type.BLOCK_PLACE, (Listener) block_listener, Event.Priority.High, (Plugin) this);
+		pm.registerEvent(Event.Type.BLOCK_FROMTO, (Listener) block_listener, Event.Priority.High, (Plugin) this);
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, (Listener) player_listener, Event.Priority.High, (Plugin) this);
 		getCommand("kc").setExecutor(new KCommand(this, player_listener));
 		log.info("[" + desc.getFullName() + "] enabled.");
