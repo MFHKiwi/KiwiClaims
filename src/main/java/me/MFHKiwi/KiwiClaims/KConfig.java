@@ -18,11 +18,11 @@ public class KConfig {
 	private FileWriter out;
 	
 	public KConfig(String file_name, File data_folder) {
-		/*DumperOptions options = new DumperOptions();
+		DumperOptions options = new DumperOptions();
 		options.setIndent(2);
 		options.setPrettyFlow(true);
-		options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);*/
-		this.yaml = new Yaml(/*options*/);
+		options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+		this.yaml = new Yaml(options);
 		this.file = new File(data_folder + File.separator + file_name);
 	}
 	
