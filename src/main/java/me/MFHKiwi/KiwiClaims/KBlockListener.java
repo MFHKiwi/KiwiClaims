@@ -11,14 +11,13 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 public class KBlockListener extends BlockListener {
 	private final KiwiClaims plugin;
-	private final List<KClaim> claims;
 	
 	public KBlockListener(KiwiClaims plugin) {
 		this.plugin = plugin;
-		claims = plugin.getClaims();
 	}
 	
 	public boolean commonHandler(Location block_location, Player player) {
+		List<KClaim> claims = plugin.getClaims();
 		String player_name = player.getName();
 		for (KClaim claim : claims) {
 			if (claim.contains(block_location)) {
@@ -47,9 +46,10 @@ public class KBlockListener extends BlockListener {
 		}
 	}
 	
-	public void onBlockFlow(BlockFromToEvent event) {
+	public void onBlockFromTo(BlockFromToEvent event) {
+		List<KClaim> claims = plugin.getClaims();
 		for (KClaim claim : claims) {
-			if (claim.contains(event.getToBlock().getLocation()) && !(claim.contains(event.getBlock().getLocation()))) {
+			if (claim.contains(event.getToBlock().getLocation()) && !claim.contains(event.getBlock().getLocation())) {
 				event.setCancelled(true);
 			}
 		}

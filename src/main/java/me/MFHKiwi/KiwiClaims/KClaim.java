@@ -6,9 +6,9 @@ import java.util.List;
 import org.bukkit.Location;
 
 public class KClaim {
-	private final Location min, max;
-	private final String owner_name;
-	private final List<String> trusted_names = new ArrayList<String>();
+	private Location min, max;
+	private String owner_name;
+	private List<String> trusted_names = new ArrayList<String>();
 	
 	public KClaim(Location min, Location max, String owner_name) {
 		int x1, x2, z1, z2, temp;
@@ -52,11 +52,11 @@ public class KClaim {
 		}
 	}
 	
-	public Location getMinLocation() {
+	public Location getMin() {
 		return this.min;
 	}
 	
-	public Location getMaxLocation() {
+	public Location getMax() {
 		return this.max;
 	}
 	

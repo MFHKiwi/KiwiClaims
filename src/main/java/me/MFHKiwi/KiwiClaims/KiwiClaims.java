@@ -15,7 +15,7 @@ public class KiwiClaims extends JavaPlugin {
 	public final Logger log = Logger.getLogger("Minecraft");
 	private PluginDescriptionFile desc;
 	private PluginManager pm;
-	private final List<KClaim> claims = new ArrayList<KClaim>();
+	private List<KClaim> claims = new ArrayList<KClaim>();
 	private final KBlockListener block_listener = new KBlockListener(this);
 	private final KPlayerListener player_listener = new KPlayerListener(this);
 	
@@ -26,7 +26,7 @@ public class KiwiClaims extends JavaPlugin {
 		pm.registerEvent(Event.Type.BLOCK_PLACE, (Listener) block_listener, Event.Priority.High, (Plugin) this);
 		pm.registerEvent(Event.Type.BLOCK_FROMTO, (Listener) block_listener, Event.Priority.High, (Plugin) this);
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, (Listener) player_listener, Event.Priority.High, (Plugin) this);
-		getCommand("kc").setExecutor(new KCommand(this, player_listener));
+		this.getCommand("kc").setExecutor(new KCommand(this, player_listener));
 		log.info("[" + desc.getFullName() + "] enabled.");
 	}
 	

@@ -40,6 +40,6 @@ public class KSelection {
 	}
 	
 	public boolean overlaps(KClaim claim) {
-		return overlaps(claim.getMinLocation(), claim.getMaxLocation());
+		return overlaps(claim.getMin(), claim.getMax());
 	}
 }
