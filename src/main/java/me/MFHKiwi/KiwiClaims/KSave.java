@@ -12,7 +12,17 @@ public class KSave {
 		if (!data_folder.exists()) data_folder.mkdirs();
 		File[] files_list = data_folder.listFiles();
 		for (File file : files_list) {
-			
+			if (file.getName().split(".")[1].equals("claim")) {
+				loadClaim(file);
+			}
 		}
+	}
+	
+	public KClaim loadClaim(File file) {
+		return new KClaim(null, null, null);
+	}
+	
+	public void saveClaim(KClaim claim) {
+		
 	}
 }
