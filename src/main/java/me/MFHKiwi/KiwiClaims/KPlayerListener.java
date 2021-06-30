@@ -38,11 +38,15 @@ public class KPlayerListener extends PlayerListener {
 		}
 		selection.setMin(new Location(selection.getMin().getWorld(), x1, selection.getMin().getBlockY(), z1));
 		selection.setMax(new Location(selection.getMax().getWorld(), x2, selection.getMax().getBlockY(), z2));
-		for (KClaim claim : plugin.getClaims()) {
+		for (KClaim claim : plugin.getClaimSave().getClaimsList()) {
 			if (selection.overlaps(claim)) return 1;
 		}
-		plugin.getClaims().add(new KClaim(selection));
-		return 0;
+		try {
+			plugin.getClaimSave().addClaim((new KClaim(selection)));
+			return 0;
+		} catch (Exception e) {
+			return 3;
+		}
 	}
 	
 	public void onPlayerInteract(PlayerInteractEvent event) {
@@ -61,6 +65,9 @@ public class KPlayerListener extends PlayerListener {
 				}
 				if (selection.getMin() != null && selection.getMax() != null) {
 					switch (handleSelection(selection)) {
+						case 3:
+							player.sendMessage("Your claim could not be created due to an internal plugin error.");
+							break;
 						case 2:
 							player.sendMessage("Selections must be in the same world!");
 							break;

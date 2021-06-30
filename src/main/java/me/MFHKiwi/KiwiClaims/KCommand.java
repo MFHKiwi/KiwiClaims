@@ -19,7 +19,7 @@ public class KCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
-			List<KClaim> claims = plugin.getClaims();
+			List<KClaim> claims = plugin.getClaimSave().getClaimsList();
 			if (sender.hasPermission("kc.use")) {
 				if (args.length < 1) {
 					sender.sendMessage("Incorrect usage. See at /kc help.");

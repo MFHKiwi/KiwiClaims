@@ -2,6 +2,7 @@ package me.MFHKiwi.KiwiClaims;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Location;
 
@@ -9,8 +10,9 @@ public class KClaim {
 	private Location min, max;
 	private String owner_name;
 	private List<String> trusted_names = new ArrayList<String>();
+	private UUID uuid;
 	
-	public KClaim(Location min, Location max, String owner_name) {
+	public KClaim(Location min, Location max, String owner_name, UUID uuid) {
 		int x1, x2, z1, z2, temp;
 		x1 = min.getBlockX();
 		x2 = max.getBlockX();
@@ -29,10 +31,11 @@ public class KClaim {
 		this.min = new Location(min.getWorld(), x1, min.getBlockY(), z1);
 		this.max = new Location(max.getWorld(), x2, max.getBlockY(), z2);
 		this.owner_name = owner_name;
+		this.uuid = uuid;
 	}
 	
 	public KClaim(KSelection selection) {
-		this(selection.getMin(), selection.getMax(), selection.getPlayerName());
+		this(selection.getMin(), selection.getMax(), selection.getPlayerName(), UUID.randomUUID());
 	}
 	
 	public boolean contains(Location location) {
@@ -62,6 +65,10 @@ public class KClaim {
 	
 	public String getOwnerName() {
 		return this.owner_name;
+	}
+	
+	public UUID getUUID() {
+		return this.uuid;
 	}
 	
 	public List<String> getTrusted() {

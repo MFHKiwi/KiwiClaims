@@ -17,7 +17,7 @@ public class KBlockListener extends BlockListener {
 	}
 	
 	public boolean commonHandler(Location block_location, Player player) {
-		List<KClaim> claims = plugin.getClaims();
+		List<KClaim> claims = plugin.getClaimSave().getClaimsList();
 		String player_name = player.getName();
 		for (KClaim claim : claims) {
 			if (claim.contains(block_location)) {
@@ -47,7 +47,7 @@ public class KBlockListener extends BlockListener {
 	}
 	
 	public void onBlockFromTo(BlockFromToEvent event) {
-		List<KClaim> claims = plugin.getClaims();
+		List<KClaim> claims = plugin.getClaimSave().getClaimsList();
 		for (KClaim claim : claims) {
 			if (claim.contains(event.getToBlock().getLocation()) && !claim.contains(event.getBlock().getLocation())) {
 				event.setCancelled(true);
