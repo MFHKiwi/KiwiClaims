@@ -9,9 +9,7 @@ import org.bukkit.event.entity.EntityListener;
 public class KEntityListener extends EntityListener {
 	
 	public void onDamage(EntityDamageEvent event) {
-		if (event.getEntity() instanceof Animals) {
-			
-		}
+		
 	}
 	
 	public void onDeath(EntityDeathEvent event) {
@@ -21,6 +19,4 @@ public class KEntityListener extends EntityListener {
 	public void onExplode(EntityExplodeEvent event) {
 		
 	}
-	
-	
 }
