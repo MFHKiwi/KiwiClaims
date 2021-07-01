@@ -37,6 +37,7 @@ public class KCommand implements CommandExecutor {
 					if (claim != null) {
 						if (claim.getOwnerName().equals(player.getName()) || sender.hasPermission("kc.admin")) {
 							plugin.getClaimSave().removeClaim(claim);
+							sender.sendMessage("Claim removed");
 						} else {
 							sender.sendMessage("You must be owner of the claim to do that");
 						}
