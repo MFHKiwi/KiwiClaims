@@ -31,21 +31,33 @@ public class KCommand implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("claim")) {
 					listener.getSelectionList().add(new KSelection(player.getName()));
 					sender.sendMessage("Punch the opposite corners of the claim you wish to create in order to make your selection");
-				} else if (args[0].equalsIgnoreCase("trust")) {
-					for (KClaim claim : claims) {
-						if (claim.contains(player.getLocation())) {
-							if (claim.getOwnerName().equals(player.getName()) || sender.hasPermission("kc.admin")) {
-								if (claims.get(claims.indexOf(claim)).addTrusted(args[1])) {
-									sender.sendMessage("Successfully trusted");
-								} else {
-									sender.sendMessage("That player is already trusted in this claim");
-								}
+				} else if (args[0].equalsIgnoreCase("unclaim")) {
+					KClaim claim = plugin.getClaimSave().inClaim(player.getLocation());
+					if (claim != null) {
+						if (claim.getOwnerName().equals(player.getName()) || sender.hasPermission("kc.admin")) {
+							try {
+								plugin.getClaimSave().removeClaim(claim.getUUID());
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+				if (args[0].equalsIgnoreCase("trust")) {
+					KClaim claim = plugin.getClaimSave().inClaim(player.getLocation());
+					if (claim != null) {
+						if (claim.getOwnerName().equals(player.getName()) || sender.hasPermission("kc.admin")) {
+							if (claims.get(claims.indexOf(claim)).addTrusted(args[1])) {
+								sender.sendMessage("Successfully trusted");
 							} else {
-								sender.sendMessage("You must be owner of the claim to do that");
+								sender.sendMessage("That player is already trusted in this claim");
 							}
 						} else {
-							sender.sendMessage("You must be standing in a claim to do that");
+							sender.sendMessage("You must be owner of the claim to do that");
 						}
+					} else {
+						sender.sendMessage("You must be standing in a claim to do that");
 					}
 				} else if (args[0].equalsIgnoreCase("untrust")) {
 					for (KClaim claim : claims) {

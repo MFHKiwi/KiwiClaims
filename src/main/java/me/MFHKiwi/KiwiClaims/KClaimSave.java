@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,6 +44,18 @@ public class KClaimSave {
 		this.claims = claims;
 	}
 	
+	public void removeClaim(UUID uuid) throws Exception {
+		for (Iterator<KClaim> it = this.claims.iterator(); it.hasNext();) {
+			KClaim claim = it.next();
+			if (claim.getUUID().equals(uuid)) {
+				it.remove();
+				new File(this.data_folder + File.separator + uuid.toString()).delete();
+			} else {
+				throw new Exception("Claim " + uuid.toString() + " not found.");
+			}
+		}
+	}
+	
 	private KClaim loadClaim(File file) throws Exception {
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(file));
@@ -72,6 +85,7 @@ public class KClaimSave {
 			out.write(locationToString(claim.getMax()));
 			out.newLine();
 			out.write(claim.getUUID().toString());
+			out.newLine();
 			out.close();
 		} catch (IOException e) {
 			throw new Exception("Could not save " + file.getName() + ": " + e.getMessage());
@@ -114,5 +128,12 @@ public class KClaimSave {
 		builder.append(this.value_separator);
 		builder.append(location.getBlockZ());
 		return builder.toString();
+	}
+	
+	public KClaim inClaim(Location location) {
+		for (KClaim claim : this.claims) {
+			if (claim.contains(location)) return claim;
+		}
+		return null;
 	}
 }

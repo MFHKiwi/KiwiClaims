@@ -17,7 +17,7 @@ public class KiwiClaims extends JavaPlugin {
 	public void onEnable() {
 		File claim_folder = new File(this.getDataFolder() + File.separator + "claims");
 		this.claim_save = new KClaimSave(this, claim_folder);
-		PluginManager pm = Bukkit.getPluginManager();
+		PluginManager pm = this.getServer().getPluginManager();
 		pm.registerEvent(Event.Type.BLOCK_BREAK, (Listener) block_listener, Event.Priority.High, (Plugin) this);
 		pm.registerEvent(Event.Type.BLOCK_PLACE, (Listener) block_listener, Event.Priority.High, (Plugin) this);
 		pm.registerEvent(Event.Type.BLOCK_FROMTO, (Listener) block_listener, Event.Priority.High, (Plugin) this);

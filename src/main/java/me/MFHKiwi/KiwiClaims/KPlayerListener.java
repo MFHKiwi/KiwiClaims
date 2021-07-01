@@ -51,35 +51,34 @@ public class KPlayerListener extends PlayerListener {
 	
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		if (!selections.isEmpty()) {
-			for (Iterator<KSelection> it = selections.iterator(); it.hasNext();) {
-				KSelection selection = it.next();
-				if (!selection.getPlayerName().equals(player.getName())) continue;
-				else if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-					selections.get(selections.indexOf(selection)).setMin(event.getClickedBlock().getLocation());
-					player.sendMessage("Position 1 set to " + selection.getMin().getBlockX() + "X, " + selection.getMin().getBlockZ() + "Z");
+		if (selections.isEmpty()) return;
+		for (Iterator<KSelection> it = selections.iterator(); it.hasNext();) {
+			KSelection selection = it.next();
+			if (!selection.getPlayerName().equals(player.getName())) continue;
+			else if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+				selections.get(selections.indexOf(selection)).setMin(event.getClickedBlock().getLocation());
+				player.sendMessage("Position 1 set to " + selection.getMin().getBlockX() + "X, " + selection.getMin().getBlockZ() + "Z");
+			}
+			else if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+				selections.get(selections.indexOf(selection)).setMax(event.getClickedBlock().getLocation());
+				player.sendMessage("Position 2 set to " + selection.getMax().getBlockX() + "X, " + selection.getMax().getBlockZ() + "Z");
+			}
+			if (selection.getMin() != null && selection.getMax() != null) {
+				switch (handleSelection(selection)) {
+					case 3:
+						player.sendMessage("Your claim could not be created due to an internal plugin error.");
+						break;
+					case 2:
+						player.sendMessage("Selections must be in the same world!");
+						break;
+					case 1:
+						player.sendMessage("Your selection overlaps another claim!");
+						break;
+					case 0:
+						player.sendMessage("Claim created!");
+						break;
 				}
-				else if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-					selections.get(selections.indexOf(selection)).setMax(event.getClickedBlock().getLocation());
-					player.sendMessage("Position 2 set to " + selection.getMax().getBlockX() + "X, " + selection.getMax().getBlockZ() + "Z");
-				}
-				if (selection.getMin() != null && selection.getMax() != null) {
-					switch (handleSelection(selection)) {
-						case 3:
-							player.sendMessage("Your claim could not be created due to an internal plugin error.");
-							break;
-						case 2:
-							player.sendMessage("Selections must be in the same world!");
-							break;
-						case 1:
-							player.sendMessage("Your selection overlaps another claim!");
-							break;
-						case 0:
-							player.sendMessage("Claim created!");
-							break;
-					}
-					it.remove();
-				}
+				it.remove();
 			}
 		}
 	}
