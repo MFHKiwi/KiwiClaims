@@ -34,6 +34,11 @@ public class KClaim {
 		this.uuid = uuid;
 	}
 	
+	public KClaim(Location min, Location max, String owner_name, UUID uuid, List<String> trusted_names) {
+		this(min, max, owner_name, uuid);
+		this.trusted_names = trusted_names;
+	}
+	
 	public KClaim(KSelection selection) {
 		this(selection.getMin(), selection.getMax(), selection.getPlayerName(), UUID.randomUUID());
 	}

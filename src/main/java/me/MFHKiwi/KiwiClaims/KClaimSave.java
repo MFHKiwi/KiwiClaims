@@ -57,15 +57,13 @@ public class KClaimSave {
 	private KClaim loadClaim(File file) throws Exception {
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(file));
-			String owner_name;
-			Location min, max;
-			UUID uuid;
-			owner_name = in.readLine();
-			min = locationFromString(in.readLine());
-			max = locationFromString(in.readLine());
-			uuid = UUID.fromString(in.readLine());
+			String owner_name = in.readLine();
+			Location min = locationFromString(in.readLine());
+			Location max = locationFromString(in.readLine());
+			UUID uuid = UUID.fromString(in.readLine());
+			List<String> trusted = trustListFromString(in.readLine());
 			in.close();
-			return new KClaim(min, max, owner_name, uuid);
+			return new KClaim(min, max, owner_name, uuid, trusted);
 		} catch (Exception e) {
 			throw new Exception("Could not load " + file.getName() + ": " + e.getMessage());
 		}
@@ -83,6 +81,8 @@ public class KClaimSave {
 			out.write(locationToString(claim.getMax()));
 			out.newLine();
 			out.write(claim.getUUID().toString());
+			out.newLine();
+			out.write(trustListToString(claim.getTrusted()));
 			out.newLine();
 			out.close();
 		} catch (IOException e) {
@@ -125,6 +125,23 @@ public class KClaimSave {
 		builder.append(location.getBlockY());
 		builder.append(this.value_separator);
 		builder.append(location.getBlockZ());
+		return builder.toString();
+	}
+	
+	private List<String> trustListFromString(String string) {
+		String[] elements = string.split(this.value_separator);
+		List<String> trusted = new ArrayList<String>();
+		for (String element : elements) {
+			trusted.add(element);
+		}
+		return trusted;
+	}
+	
+	private String trustListToString(List<String> trusted) {
+		StringBuilder builder = new StringBuilder();
+		for (String string : trusted) {
+			builder.append(string + this.value_separator);
+		}
 		return builder.toString();
 	}
 	

@@ -50,6 +50,7 @@ public class KCommand implements CommandExecutor {
 					if (claim != null) {
 						if (claim.getOwnerName().equals(player.getName()) || sender.hasPermission("kc.admin")) {
 							if (claims.get(claims.indexOf(claim)).addTrusted(args[1])) {
+								plugin.getClaimSave().saveClaims();
 								sender.sendMessage("Successfully trusted");
 							} else {
 								sender.sendMessage("That player is already trusted in this claim");
@@ -66,6 +67,7 @@ public class KCommand implements CommandExecutor {
 						if (claim.contains(player.getLocation())) {
 							if (claim.getOwnerName().equals(player.getName())) {
 								if (claims.get(claims.indexOf(claim)).removeTrusted(args[1])) {
+									plugin.getClaimSave().saveClaims();
 									sender.sendMessage("Successfully untrusted");
 								} else {
 									sender.sendMessage("That player is not trusted in this claim");
