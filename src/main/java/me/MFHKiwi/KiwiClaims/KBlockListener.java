@@ -1,7 +1,5 @@
 package me.MFHKiwi.KiwiClaims;
 
-import java.util.List;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -17,19 +15,16 @@ public class KBlockListener extends BlockListener {
 	}
 	
 	public boolean commonHandler(Location block_location, Player player) {
-		List<KClaim> claims = plugin.getClaimSave().getClaimsList();
 		String player_name = player.getName();
-		for (KClaim claim : claims) {
-			if (claim.contains(block_location)) {
-				if (!(player_name.equals(claim.getOwnerName())) && 
-					!(claim.getTrusted().contains(player_name))) {
-					return true;
-				}
-			}
+		KClaim claim = plugin.getClaimSave().getClaimAt(block_location);
+		if (claim == null) return false;
+		if (!(player_name.equals(claim.getOwnerName())) && 
+			!(claim.getTrusted().contains(player_name))) {
+			return true;
 		}
 		return false;
 	}
-		
+	
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (!event.getPlayer().hasPermission("kc.admin")) {
 			if (commonHandler(event.getBlock().getLocation(), event.getPlayer())) {
@@ -47,11 +42,10 @@ public class KBlockListener extends BlockListener {
 	}
 	
 	public void onBlockFromTo(BlockFromToEvent event) {
-		List<KClaim> claims = plugin.getClaimSave().getClaimsList();
-		for (KClaim claim : claims) {
-			if (claim.contains(event.getToBlock().getLocation()) && !claim.contains(event.getBlock().getLocation())) {
-				event.setCancelled(true);
-			}
+		KClaim claim = plugin.getClaimSave().getClaimAt(event.getToBlock().getLocation());
+		if (claim == null) return;
+		if (!claim.contains(event.getBlock().getLocation())) {
+			event.setCancelled(true);
 		}
 	}
 }

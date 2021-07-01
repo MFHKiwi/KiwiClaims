@@ -45,6 +45,7 @@ public class KPlayerListener extends PlayerListener {
 			plugin.getClaimSave().addClaim((new KClaim(selection)));
 			return 0;
 		} catch (Exception e) {
+			plugin.log(e.getMessage());
 			return 3;
 		}
 	}

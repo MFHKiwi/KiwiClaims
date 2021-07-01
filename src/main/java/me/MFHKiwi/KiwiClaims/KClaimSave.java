@@ -91,8 +91,31 @@ public class KClaimSave {
 	}
 	
 	public void addClaim(KClaim claim) throws Exception {
-		saveClaim(claim);
 		this.claims.add(claim);
+		try {
+			saveClaim(claim);
+		} catch (Exception e) {
+			this.claims.remove(this.claims.indexOf(claim));
+			throw new Exception("Could not create claim:" + e.getMessage());
+		}
+	}
+	
+	public void addTrusted(KClaim claim, String name) throws Exception {
+		int i = this.claims.indexOf(claim);
+		if (this.claims.get(i) == null) throw new Exception("Claim " + claim.getUUID().toString() + " not found");
+		if (claim.getTrusted().contains(name)) throw new Exception("Claim " + claim.getUUID().toString() + " already has that player trusted.");
+		claim.addTrusted(name);
+		saveClaim(claim);
+		this.claims.set(i, claim);
+	}
+	
+	public void removeTrusted(KClaim claim, String name) throws Exception {
+		int i = this.claims.indexOf(claim);
+		if (this.claims.get(i) == null) throw new Exception("Claim " + claim.getUUID().toString() + " not found");
+		if (!claim.getTrusted().contains(name)) throw new Exception("Claim " + claim.getUUID().toString() + " does not have that player trusted.");
+		claim.removeTrusted(name);
+		saveClaim(claim);
+		this.claims.set(i, claim);
 	}
 	
 	public void saveClaims() {
@@ -145,7 +168,7 @@ public class KClaimSave {
 		return builder.toString();
 	}
 	
-	public KClaim inClaim(Location location) {
+	public KClaim getClaimAt(Location location) {
 		for (KClaim claim : this.claims) {
 			if (claim.contains(location)) return claim;
 		}
