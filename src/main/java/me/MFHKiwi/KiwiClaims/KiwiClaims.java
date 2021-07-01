@@ -2,7 +2,6 @@ package me.MFHKiwi.KiwiClaims;
 
 import java.io.File;
 import java.util.logging.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;

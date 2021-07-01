@@ -44,14 +44,12 @@ public class KClaimSave {
 		this.claims = claims;
 	}
 	
-	public void removeClaim(UUID uuid) throws Exception {
+	public void removeClaim(KClaim claim) {
 		for (Iterator<KClaim> it = this.claims.iterator(); it.hasNext();) {
-			KClaim claim = it.next();
-			if (claim.getUUID().equals(uuid)) {
+			KClaim claim_from_list = it.next();
+			if (claim.getUUID().equals(claim_from_list.getUUID())) {
 				it.remove();
-				new File(this.data_folder + File.separator + uuid.toString()).delete();
-			} else {
-				throw new Exception("Claim " + uuid.toString() + " not found.");
+				new File(this.data_folder + File.separator + claim.getUUID().toString()).delete();
 			}
 		}
 	}
