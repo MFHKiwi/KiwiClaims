@@ -20,6 +20,8 @@ public class KBlockListener extends BlockListener {
 		if (claim == null) return false;
 		if (!(player_name.equals(claim.getOwnerName())) && 
 			!(claim.getTrusted().contains(player_name))) {
+			player.sendMessage("You are not allowed to build here!");
+			player.sendMessage("Ask the owner of this claim, " + claim.getOwnerName() + ", for permission.");
 			return true;
 		}
 		return false;
