@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.MFHKiwi</groupId>
   <artifactId>KiwiClaims</artifactId>
-  <version>1.0</version>
+  <version>0.0.1-SNAPSHOT</version>
   <name>KiwiClaims</name>
   <description>A claims plugin for CraftBukkit 1060.</description>
   <build>

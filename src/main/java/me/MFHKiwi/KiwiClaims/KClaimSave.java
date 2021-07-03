@@ -100,22 +100,24 @@ public class KClaimSave {
 		}
 	}
 	
-	public void addTrusted(KClaim claim, String name) throws Exception {
+	public boolean addTrusted(KClaim claim, String name) throws Exception {
 		int i = this.claims.indexOf(claim);
 		if (this.claims.get(i) == null) throw new Exception("Claim " + claim.getUUID().toString() + " not found");
-		if (claim.getTrusted().contains(name)) throw new Exception("Claim " + claim.getUUID().toString() + " already has that player trusted.");
+		if (claim.getTrusted().contains(name)) return false;
 		claim.addTrusted(name);
 		saveClaim(claim);
 		this.claims.set(i, claim);
+		return true;
 	}
 	
-	public void removeTrusted(KClaim claim, String name) throws Exception {
+	public boolean removeTrusted(KClaim claim, String name) throws Exception {
 		int i = this.claims.indexOf(claim);
 		if (this.claims.get(i) == null) throw new Exception("Claim " + claim.getUUID().toString() + " not found");
-		if (!claim.getTrusted().contains(name)) throw new Exception("Claim " + claim.getUUID().toString() + " does not have that player trusted.");
+		if (!claim.getTrusted().contains(name)) return false;
 		claim.removeTrusted(name);
 		saveClaim(claim);
 		this.claims.set(i, claim);
+		return true;
 	}
 	
 	public void saveClaims() {
