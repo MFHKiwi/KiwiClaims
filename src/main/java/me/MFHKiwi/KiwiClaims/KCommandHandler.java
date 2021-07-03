@@ -71,7 +71,13 @@ public class KCommandHandler implements CommandExecutor {
 		}
 		Player player = (Player) sender;
 		if (subcommand.equalsIgnoreCase("claim")) {
-			listener.getSelectionList().add(new KSelection(player.getName()));
+			KSelection selection = new KSelection(player.getName());
+			for (KSelection existing_selection : listener.getSelectionList()) {
+				if (selection.getPlayerName().equals(existing_selection.getPlayerName())) {
+					return true;
+				}
+			}
+			listener.getSelectionList().add(selection);
 			player.sendMessage(this.claim_message);
 		}
 		else if (subcommand.equalsIgnoreCase("unclaim") || subcommand.equalsIgnoreCase("remove")) {
