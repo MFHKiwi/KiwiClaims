@@ -47,37 +47,36 @@ public class KCommand implements CommandExecutor {
 				}
 				if (args[0].equalsIgnoreCase("trust")) {
 					KClaim claim = plugin.getClaimSave().getClaimAt(player.getLocation());
-					if (claim != null) {
-						if (claim.getOwnerName().equals(player.getName()) || sender.hasPermission("kc.admin")) {
-							try {
-								plugin.getClaimSave().addTrusted(claim, args[1]);
-								player.sendMessage("Successfully trusted");
-							} catch (Exception e) {
-								player.sendMessage("That player is already trusted in this claim");
-							}
-						} else {
-							sender.sendMessage("You must be owner of the claim to do that");
+					if (claim == null) {
+						sender.sendMessage("You must be standing in a claim to do that");
+						return true;
+					}
+					if (claim.getOwnerName().equals(player.getName()) || sender.hasPermission("kc.admin")) {
+						try {
+							plugin.getClaimSave().addTrusted(claim, args[1]);
+							player.sendMessage("Successfully trusted");
+						} catch (Exception e) {
+							player.sendMessage("That player is already trusted in this claim");
 						}
 					} else {
-						sender.sendMessage("You must be standing in a claim to do that");
+						sender.sendMessage("You must be owner of the claim to do that");
 					}
 				}
 				if (args[0].equalsIgnoreCase("untrust")) {
-					for (KClaim claim : claims) {
-						if (claim.contains(player.getLocation())) {
-							if (claim.getOwnerName().equals(player.getName())) {
-								try {
-									plugin.getClaimSave().removeTrusted(claim, args[1]);
-									player.sendMessage("Successfully untrusted");
-								} catch (Exception e) {
-									player.sendMessage("That player does not have trust in this claim");
-								}
-							} else {
-								sender.sendMessage("You must be owner of the claim to do that");
-							}
-						} else {
-							sender.sendMessage("You must be standing in a claim to do that");
+					KClaim claim = plugin.getClaimSave().getClaimAt(player.getLocation());
+					if (claim == null) {
+						sender.sendMessage("You must be standing in a claim to do that");
+						return true;
+					}
+					if (claim.getOwnerName().equals(player.getName())) {
+						try {
+							plugin.getClaimSave().removeTrusted(claim, args[1]);
+							player.sendMessage("Successfully untrusted");
+						} catch (Exception e) {
+							player.sendMessage("That player does not have trust in this claim");
 						}
+					} else {
+						sender.sendMessage("You must be owner of the claim to do that");
 					}
 				}
 			} else {

@@ -76,6 +76,13 @@ public class KClaim {
 		return this.uuid;
 	}
 	
+	public boolean isTrusted(String name) {
+		for (String trusted_name : this.trusted_names) {
+			if (name.equals(trusted_name)) return true;
+		}
+		return false;
+	}
+	
 	public List<String> getTrusted() {
 		return this.trusted_names;
 	}

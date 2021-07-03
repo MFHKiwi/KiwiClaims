@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Iterator;
 
 import org.bukkit.Location;
+import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -52,6 +53,13 @@ public class KPlayerListener extends PlayerListener {
 	
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
+		if (event.getClickedBlock().getState() instanceof ContainerBlock && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+			KClaim claim = plugin.getClaimSave().getClaimAt(event.getClickedBlock().getLocation());
+			if (claim == null) return;
+			if (!player.getName().equals(claim.getOwnerName()) && !claim.isTrusted(player.getName())) {
+				event.setCancelled(true);
+			}
+		}
 		if (selections.isEmpty()) return;
 		for (Iterator<KSelection> it = selections.iterator(); it.hasNext();) {
 			KSelection selection = it.next();
