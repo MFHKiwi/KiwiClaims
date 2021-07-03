@@ -1,5 +1,6 @@
 package me.MFHKiwi.KiwiClaims;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -11,9 +12,15 @@ import org.bukkit.event.entity.EntityListener;
 
 public class KEntityListener extends EntityListener {
 	private final KiwiClaims plugin;
+	private final String[] not_allowed = new String[3];
 	
 	public KEntityListener(KiwiClaims plugin) {
 		this.plugin = plugin;
+		ChatColor colour1 = plugin.getColour(1);
+		ChatColor colour2 = plugin.getColour(2);
+		this.not_allowed[0] = colour1 + "You are not allowed to hurt that here!";
+		this.not_allowed[1] = colour1 + "Ask the owner of this claim, " + colour2;
+		this.not_allowed[2] = colour1 + ", for permission.";
 	}
 	
 	public void onEntityDamage(EntityDamageEvent event) {
@@ -35,8 +42,8 @@ public class KEntityListener extends EntityListener {
 				if (player_name.equals(trusted_name)) return;
 			}
 			event.setCancelled(true);
-			player.sendMessage("You are not allowed to hurt that here!");
-			player.sendMessage("Ask the owner of this claim, " + claim.getOwnerName() + ", for permission.");
+			player.sendMessage(this.not_allowed[0]);
+			player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
 		}
 	}
 	

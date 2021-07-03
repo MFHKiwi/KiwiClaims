@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
@@ -14,9 +15,21 @@ import org.bukkit.event.player.PlayerListener;
 public class KPlayerListener extends PlayerListener {
 	private final KiwiClaims plugin;
 	private final List<KSelection> selections = new ArrayList<KSelection>();
+	private final String internal_error, world_mismatch, overlap, claim_create;
+	private final String[] pos_set = new String[4];
 	
 	public KPlayerListener(KiwiClaims plugin) {
 		this.plugin = plugin;
+		ChatColor colour1 = plugin.getColour(1);
+		ChatColor colour2 = plugin.getColour(2);
+		this.internal_error = colour1 + "Your claim could not be created due to an internal plugin error.";
+		this.world_mismatch = colour1 + "Selections must be in the same world!";
+		this.overlap = colour1 + "Your selection overlaps another claim!";
+		this.claim_create = colour2 + "Claim created! Use " + colour1 + "/kc trust" + colour2 + " to allow others to build in it.";
+		this.pos_set[0] = colour2 + "Position ";
+		this.pos_set[1] = colour2 + " set (" + colour1 + "x: ";
+		this.pos_set[2] = colour1 + ", z: ";
+		this.pos_set[3] = colour2 + ")";
 	}
 	
 	public int handleSelection(KSelection sel) {
@@ -66,25 +79,25 @@ public class KPlayerListener extends PlayerListener {
 			if (!selection.getPlayerName().equals(player.getName())) continue;
 			else if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
 				selections.get(selections.indexOf(selection)).setMin(event.getClickedBlock().getLocation());
-				player.sendMessage("Position 1 set to " + selection.getMin().getBlockX() + "X, " + selection.getMin().getBlockZ() + "Z");
+				player.sendMessage(this.pos_set[0] + "1" + this.pos_set[1] + selection.getMin().getBlockX() + this.pos_set[2] + selection.getMin().getBlockZ() + this.pos_set[3]);
 			}
 			else if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 				selections.get(selections.indexOf(selection)).setMax(event.getClickedBlock().getLocation());
-				player.sendMessage("Position 2 set to " + selection.getMax().getBlockX() + "X, " + selection.getMax().getBlockZ() + "Z");
+				player.sendMessage(this.pos_set[0] + "2" + this.pos_set[1] + selection.getMax().getBlockX() + this.pos_set[2] + selection.getMax().getBlockZ() + this.pos_set[3]);
 			}
 			if (selection.getMin() != null && selection.getMax() != null) {
 				switch (handleSelection(selection)) {
 					case 3:
-						player.sendMessage("Your claim could not be created due to an internal plugin error.");
+						player.sendMessage(this.internal_error);
 						break;
 					case 2:
-						player.sendMessage("Selections must be in the same world!");
+						player.sendMessage(this.world_mismatch);
 						break;
 					case 1:
-						player.sendMessage("Your selection overlaps another claim!");
+						player.sendMessage(this.overlap);
 						break;
 					case 0:
-						player.sendMessage("Claim created!");
+						player.sendMessage(this.claim_create);
 						break;
 				}
 				it.remove();

@@ -9,17 +9,15 @@ import org.bukkit.entity.Player;
 public class KCommandHandler implements CommandExecutor {
 	private final KiwiClaims plugin;
 	private final KPlayerListener listener;
-	private final ChatColor colour1;
-	private final ChatColor colour2;
 	private final String[] help_message = new String[7];
 	private final String incorrect_usage, plugin_info, not_player, claim_message, not_in_claim, unclaim_message, not_allowed, 
-	trust_message, already_trusted, untrust_message, already_untrusted, internal_error;
+	trust_message, already_trusted, untrust_message, already_untrusted, internal_error, no_permission;
 	
 	public KCommandHandler(KiwiClaims plugin, KPlayerListener listener) {
 		this.plugin = plugin;
 		this.listener = listener;
-		this.colour1 = plugin.getColour(1);
-		this.colour2 = plugin.getColour(2);
+		ChatColor colour1 = plugin.getColour(1);
+		ChatColor colour2 = plugin.getColour(2);
 		this.help_message[0] = colour2 + "-=-" + colour1 + "KiwiClaims Help" + colour2 + "-=-";
 		this.help_message[1] = colour2 + " - " + colour1 + "/kc help" + colour2 + ": Show this help screen";
 		this.help_message[2] = colour2 + " - " + colour1 + "/kc info" + colour2 + ": Show plugin info";
@@ -39,6 +37,7 @@ public class KCommandHandler implements CommandExecutor {
 		this.untrust_message = colour2 + "Player untrusted.";
 		this.already_untrusted = colour1 + "That player does not have trust in this claim.";
 		this.internal_error = colour1 + "Could not do this due to an internal plugin error. Contact staff about this.";
+		this.no_permission = colour1 + "You do not have permission to do that.";
 	}
 	
 	private boolean commonHandler(Player player, KClaim claim) {
@@ -56,7 +55,11 @@ public class KCommandHandler implements CommandExecutor {
 			sender.sendMessage(this.plugin_info);
 			return true;
 		}
-		else if (subcommand.equalsIgnoreCase("help")) {
+		if (!sender.hasPermission("kc.use")) {
+			sender.sendMessage(this.no_permission);
+			return true;
+		}
+		if (subcommand.equalsIgnoreCase("help")) {
 			for (String line : this.help_message) {
 				sender.sendMessage(line);
 			}
@@ -118,6 +121,9 @@ public class KCommandHandler implements CommandExecutor {
 				plugin.log(e.getMessage());
 				player.sendMessage(this.internal_error);
 			}
+		}
+		else {
+			sender.sendMessage(this.incorrect_usage);
 		}
 		return true;
 	}

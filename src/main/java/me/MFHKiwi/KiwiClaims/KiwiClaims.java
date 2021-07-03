@@ -12,11 +12,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class KiwiClaims extends JavaPlugin {
 	private KClaimSave claim_save;
+	private ChatColor colour1 = ChatColor.RED;
+	private ChatColor colour2 = ChatColor.DARK_AQUA;
 	private final KBlockListener block_listener = new KBlockListener(this);
 	private final KPlayerListener player_listener = new KPlayerListener(this);
 	private final KEntityListener entity_listener = new KEntityListener(this);
-	private ChatColor colour1 = ChatColor.RED;
-	private ChatColor colour2 = ChatColor.DARK_AQUA;
+
 	
 	public void onEnable() {
 		File claim_folder = new File(this.getDataFolder() + File.separator + "claims");
