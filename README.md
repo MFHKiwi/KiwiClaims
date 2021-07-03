@@ -1,5 +1,5 @@
 # KiwiClaims
-KiwiClaims is a claims plugin for CraftBukkit 1060. I hope to turn this into a fully featured plugin that can compete with modern claims plugins.
+KiwiClaims is a claims plugin for CraftBukkit 1060. The interface is inspired by those of WorldEdit and GriefPrevention. I hope to turn this into a fully featured plugin that can compete with modern claims plugins.
 
 ### What's done:
  * Claims with trust functionality
