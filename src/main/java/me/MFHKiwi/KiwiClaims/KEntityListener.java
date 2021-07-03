@@ -1,6 +1,9 @@
 package me.MFHKiwi.KiwiClaims;
 
+import java.util.Iterator;
+
 import org.bukkit.ChatColor;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -48,9 +51,12 @@ public class KEntityListener extends EntityListener {
 	}
 	
 	public void onEntityExplode(EntityExplodeEvent event) {
-		KClaim claim = plugin.getClaimSave().getClaimAt(event.getLocation());
-		if (claim != null) {
-			event.setCancelled(true);
+		for (Iterator<Block> it = event.blockList().iterator(); it.hasNext();) {
+			Block block = it.next();
+			KClaim claim = plugin.getClaimSave().getClaimAt(block.getLocation());
+			if (claim != null) {
+				it.remove();
+			}
 		}
 	}
 }
