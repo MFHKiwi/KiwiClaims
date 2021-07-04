@@ -51,14 +51,17 @@ public class KClaimSave {
 	public void reloadClaims() {
 		File[] files_list = data_folder.listFiles();
 		List<KClaim> claims = new ArrayList<KClaim>();
+		int failed_claims = 0;
 		for (File file : files_list) {
 			try {
 				claims.add(loadClaim(file));
 			} catch (Exception e) {
-				this.plugin.log(e.getMessage());
+				plugin.log(e.getMessage());
+				failed_claims++;
 			}
 		}
 		this.claims = claims;
+		plugin.log("Loaded " + claims.size() + " claims. " + failed_claims + " claims failed to load.");
 	}
 	
 	public void removeClaim(KClaim claim) {
@@ -139,13 +142,16 @@ public class KClaimSave {
 	
 	public void saveClaims() {
 		if (this.claims.isEmpty()) return;
+		int failed_claims = 0;
 		for (KClaim claim : this.claims) {
 			try {
 				saveClaim(claim);
 			} catch (Exception e) {
 				plugin.log(e.getMessage());
+				failed_claims++;
 			}
 		}
+		this.plugin.log("Saved " + claims.size() + " claims. " + failed_claims + " claims failed to save.");
 	}
 	
 	private Location locationFromString(String string) throws Exception {
