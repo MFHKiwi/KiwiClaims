@@ -102,8 +102,10 @@ public class KPlayerListener extends PlayerListener {
 		if (event.getClickedBlock().getState() instanceof ContainerBlock && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			KClaim claim = plugin.getClaimSave().getClaimAt(event.getClickedBlock().getLocation());
 			if (claim == null) return;
-			if (!player.getName().equals(claim.getOwnerName()) && !claim.isTrusted(player.getName())) {
+			if (commonHandler(player, claim)) {
 				event.setCancelled(true);
+				player.sendMessage(this.not_allowed[0]);
+				player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
 			}
 		}
 		if (selections.isEmpty()) return;
