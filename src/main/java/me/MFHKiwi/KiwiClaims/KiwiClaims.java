@@ -35,7 +35,6 @@ public class KiwiClaims extends JavaPlugin {
 	private final KPlayerListener player_listener = new KPlayerListener(this);
 	private final KEntityListener entity_listener = new KEntityListener(this);
 
-	
 	public void onEnable() {
 		File claim_folder = new File(this.getDataFolder() + File.separator + "claims");
 		this.claim_save = new KClaimSave(this, claim_folder);
@@ -45,7 +44,12 @@ public class KiwiClaims extends JavaPlugin {
 		pm.registerEvent(Event.Type.BLOCK_FROMTO, (Listener) block_listener, Event.Priority.High, (Plugin) this);
 		pm.registerEvent(Event.Type.ENTITY_DAMAGE, (Listener) entity_listener, Event.Priority.High, (Plugin) this);
 		pm.registerEvent(Event.Type.ENTITY_EXPLODE, (Listener) entity_listener, Event.Priority.High, (Plugin) this);
+		pm.registerEvent(Event.Type.PAINTING_BREAK, (Listener) entity_listener, Event.Priority.High, (Plugin) this);
+		pm.registerEvent(Event.Type.PAINTING_PLACE, (Listener) entity_listener, Event.Priority.High, (Plugin) this);
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, (Listener) player_listener, Event.Priority.High, (Plugin) this);
+		pm.registerEvent(Event.Type.PLAYER_BED_ENTER, (Listener) player_listener, Event.Priority.High, (Plugin) this);
+		pm.registerEvent(Event.Type.PLAYER_BUCKET_FILL, (Listener) player_listener, Event.Priority.High, (Plugin) this);
+		pm.registerEvent(Event.Type.PLAYER_BUCKET_EMPTY, (Listener) player_listener, Event.Priority.High, (Plugin) this);
 		this.getCommand("kc").setExecutor(new KCommandHandler(this, player_listener));
 		log("Plugin enabled.");
 	}

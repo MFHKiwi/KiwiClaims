@@ -23,9 +23,13 @@ import java.util.Iterator;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerBedEnterEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerListener;
 
@@ -34,6 +38,7 @@ public class KPlayerListener extends PlayerListener {
 	private final List<KSelection> selections = new ArrayList<KSelection>();
 	private final String internal_error, world_mismatch, overlap, claim_create;
 	private final String[] pos_set = new String[4];
+	private final String[] not_allowed = new String[3];
 	
 	public KPlayerListener(KiwiClaims plugin) {
 		this.plugin = plugin;
@@ -47,6 +52,17 @@ public class KPlayerListener extends PlayerListener {
 		this.pos_set[1] = colour2 + " set (" + colour1 + "x: ";
 		this.pos_set[2] = colour1 + ", z: ";
 		this.pos_set[3] = colour2 + ")";
+		this.not_allowed[0] = colour1 + "You are not allowed to use that here!";
+		this.not_allowed[1] = colour1 + "Ask the owner of this claim, " + colour2;
+		this.not_allowed[2] = colour1 + ", for permission.";
+	}
+	
+	public boolean commonHandler(Player player, KClaim claim) {
+		String player_name = player.getName();
+		if (!player_name.equals(claim.getOwnerName()) &&
+				!claim.getTrusted().contains(player_name) &&
+				!player.hasPermission("kc.admin")) return true;
+		else return false;
 	}
 	
 	public int handleSelection(KSelection sel) {
@@ -124,5 +140,39 @@ public class KPlayerListener extends PlayerListener {
 	
 	public List<KSelection> getSelectionList() {
 		return this.selections;
+	}
+	
+	public void onPlayerBedEnter(PlayerBedEnterEvent event) {
+		Block bed = event.getBed();
+		Player player = event.getPlayer();
+		KClaim claim = plugin.getClaimSave().getClaimAt(bed.getLocation());
+		if (claim == null) return;
+		if (commonHandler(player, claim)) {
+			event.setCancelled(true);
+			player.sendMessage(this.not_allowed[0]);
+			player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
+		}
+	}
+	
+	public void onPlayerBucketFill(PlayerBucketFillEvent event) {
+		Player player = event.getPlayer();
+		KClaim claim = plugin.getClaimSave().getClaimAt(event.getBlockClicked().getLocation());
+		if (claim == null) return;
+		if (commonHandler(player, claim)) {
+			event.setCancelled(true);
+			player.sendMessage(this.not_allowed[0]);
+			player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
+		}
+	}
+	
+	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event) {
+		Player player = event.getPlayer();
+		KClaim claim = plugin.getClaimSave().getClaimAt(event.getBlockClicked().getLocation());
+		if (claim == null) return;
+		if (commonHandler(player, claim)) {
+			event.setCancelled(true);
+			player.sendMessage(this.not_allowed[0]);
+			player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
+		}
 	}
 }

@@ -29,18 +29,30 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityListener;
+import org.bukkit.event.painting.PaintingBreakByEntityEvent;
+import org.bukkit.event.painting.PaintingBreakEvent;
+import org.bukkit.event.painting.PaintingPlaceEvent;
 
 public class KEntityListener extends EntityListener {
 	private final KiwiClaims plugin;
-	private final String[] not_allowed = new String[3];
+	private final String[] not_allowed = new String[4];
 	
 	public KEntityListener(KiwiClaims plugin) {
 		this.plugin = plugin;
 		ChatColor colour1 = plugin.getColour(1);
 		ChatColor colour2 = plugin.getColour(2);
 		this.not_allowed[0] = colour1 + "You are not allowed to hurt that here!";
-		this.not_allowed[1] = colour1 + "Ask the owner of this claim, " + colour2;
-		this.not_allowed[2] = colour1 + ", for permission.";
+		this.not_allowed[1] = colour1 + "You are not allowed to build here!";
+		this.not_allowed[2] = colour1 + "Ask the owner of this claim, " + colour2;
+		this.not_allowed[3] = colour1 + ", for permission.";
+	}
+	
+	public boolean commonHandler(Player player, KClaim claim) {
+		String player_name = player.getName();
+		if (!player_name.equals(claim.getOwnerName()) &&
+				!claim.getTrusted().contains(player_name) &&
+				!player.hasPermission("kc.admin")) return true;
+		else return false;
 	}
 	
 	public void onEntityDamage(EntityDamageEvent event) {
@@ -56,14 +68,10 @@ public class KEntityListener extends EntityListener {
 			return;
 		}
 		Player player = (Player) event2.getDamager();
-		String player_name = player.getName();
-		if (!player_name.equals(claim.getOwnerName())) {
-			for (String trusted_name : claim.getTrusted()) {
-				if (player_name.equals(trusted_name)) return;
-			}
+		if (commonHandler(player, claim)) {
 			event.setCancelled(true);
 			player.sendMessage(this.not_allowed[0]);
-			player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
+			player.sendMessage(this.not_allowed[2] + claim.getOwnerName() + this.not_allowed[3]);
 		}
 	}
 	
@@ -74,6 +82,31 @@ public class KEntityListener extends EntityListener {
 			if (claim != null) {
 				it.remove();
 			}
+		}
+	}
+	
+	public void onPaintingBreak(PaintingBreakEvent event) {
+		if (!(event instanceof PaintingBreakByEntityEvent)) return;
+		PaintingBreakByEntityEvent event2 = (PaintingBreakByEntityEvent) event;
+		KClaim claim = plugin.getClaimSave().getClaimAt(event2.getPainting().getLocation());
+		if (claim == null) return;
+		if (!(event2.getRemover() instanceof Player)) event.setCancelled(true);
+		Player player = (Player) event2.getRemover();
+		if (commonHandler(player, claim)) {
+			event.setCancelled(true);
+			player.sendMessage(this.not_allowed[1]);
+			player.sendMessage(this.not_allowed[2] + claim.getOwnerName() + this.not_allowed[3]);
+		}
+	}
+	
+	public void onPaintingPlace(PaintingPlaceEvent event) {
+		Player player = event.getPlayer();
+		KClaim claim = plugin.getClaimSave().getClaimAt(event.getPainting().getLocation());
+		if (claim == null) return;
+		if (commonHandler(player, claim)) {
+			event.setCancelled(true);
+			player.sendMessage(this.not_allowed[1]);
+			player.sendMessage(this.not_allowed[2] + claim.getOwnerName() + this.not_allowed[3]);
 		}
 	}
 }
