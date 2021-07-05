@@ -88,16 +88,11 @@ public class KCommandHandler implements CommandExecutor {
 		}
 		Player player = (Player) sender;
 		if (subcommand.equalsIgnoreCase("claim")) {
-			KSelection selection = new KSelection(player.getName());
-			for (KSelection existing_selection : listener.getSelectionList()) {
-				if (selection.getPlayerName().equals(existing_selection.getPlayerName())) {
-					return true;
-				}
-			}
-			listener.getSelectionList().add(selection);
+			if (!listener.register(player)) return true;
 			player.sendMessage(this.claim_message);
+			return true;
 		}
-		else if (subcommand.equalsIgnoreCase("unclaim") || subcommand.equalsIgnoreCase("remove")) {
+		if (subcommand.equalsIgnoreCase("unclaim") || subcommand.equalsIgnoreCase("remove")) {
 			KClaim claim = plugin.getClaimSave().getClaimAt(player.getLocation());
 			if (claim == null) {
 				player.sendMessage(this.not_in_claim);
@@ -109,8 +104,9 @@ public class KCommandHandler implements CommandExecutor {
 				plugin.getClaimSave().removeClaim(claim);
 				player.sendMessage(this.unclaim_message);
 			}
+			return true;
 		}
-		else if (subcommand.equalsIgnoreCase("trust")) {
+		if (subcommand.equalsIgnoreCase("trust")) {
 			KClaim claim = plugin.getClaimSave().getClaimAt(player.getLocation());
 			if (args.length < 2) {
 				player.sendMessage(this.incorrect_usage);
@@ -131,8 +127,9 @@ public class KCommandHandler implements CommandExecutor {
 				plugin.log(e.getMessage());
 				player.sendMessage(this.internal_error);
 			}
+			return true;
 		}
-		else if (subcommand.equalsIgnoreCase("untrust")) {
+		if (subcommand.equalsIgnoreCase("untrust")) {
 			KClaim claim = plugin.getClaimSave().getClaimAt(player.getLocation());
 			if (args.length < 2) {
 				player.sendMessage(this.incorrect_usage);
@@ -153,10 +150,9 @@ public class KCommandHandler implements CommandExecutor {
 				plugin.log(e.getMessage());
 				player.sendMessage(this.internal_error);
 			}
+			return true;
 		}
-		else {
-			sender.sendMessage(this.incorrect_usage);
-		}
+		sender.sendMessage(this.incorrect_usage);
 		return true;
 	}
 

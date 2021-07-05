@@ -91,6 +91,7 @@ public class KPlayerListener extends PlayerListener {
 	}
 	
 	public void onPlayerInteract(PlayerInteractEvent event) {
+		if (event.getClickedBlock() == null) return;
 		Player player = event.getPlayer();
 		// Check if the player is trying to open a chest because Bukkit somehow didn't have an event for this.
 		if (event.getClickedBlock().getState() instanceof ContainerBlock && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
@@ -157,8 +158,12 @@ public class KPlayerListener extends PlayerListener {
 		}
 	}
 	
-	public List<KSelection> getSelectionList() {
-		return this.selections;
+	public boolean register(Player player) {
+		for (KSelection selection : this.selections) {
+			if (selection.getPlayerName().equals(player.getName())) return false;
+		}
+		this.selections.add(new KSelection(player.getName()));
+		return true;
 	}
 	
 	public void onPlayerBedEnter(PlayerBedEnterEvent event) {
