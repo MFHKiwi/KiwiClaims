@@ -82,7 +82,10 @@ public class KEntityListener extends EntityListener {
 		PaintingBreakByEntityEvent event2 = (PaintingBreakByEntityEvent) event;
 		KClaim claim = plugin.getClaimSave().getClaimAt(event2.getPainting().getLocation());
 		if (claim == null) return;
-		if (!(event2.getRemover() instanceof Player)) event.setCancelled(true);
+		if (!(event2.getRemover() instanceof Player)) { 
+			event.setCancelled(true);
+			return;
+		}
 		Player player = (Player) event2.getRemover();
 		if (KiwiClaims.shouldPrevent(player, claim)) {
 			event.setCancelled(true);
