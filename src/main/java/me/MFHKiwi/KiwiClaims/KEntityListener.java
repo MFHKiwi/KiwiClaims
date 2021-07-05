@@ -47,14 +47,6 @@ public class KEntityListener extends EntityListener {
 		this.not_allowed[3] = colour1 + ", for permission.";
 	}
 	
-	public boolean commonHandler(Player player, KClaim claim) {
-		String player_name = player.getName();
-		if (!player_name.equals(claim.getOwnerName()) &&
-				!claim.getTrusted().contains(player_name) &&
-				!player.hasPermission("kc.admin")) return true;
-		else return false;
-	}
-	
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (!(event instanceof EntityDamageByEntityEvent)) return;
 		if (!(event.getEntity() instanceof Animals) &&
@@ -68,7 +60,7 @@ public class KEntityListener extends EntityListener {
 			return;
 		}
 		Player player = (Player) event2.getDamager();
-		if (commonHandler(player, claim)) {
+		if (KiwiClaims.shouldPrevent(player, claim)) {
 			event.setCancelled(true);
 			player.sendMessage(this.not_allowed[0]);
 			player.sendMessage(this.not_allowed[2] + claim.getOwnerName() + this.not_allowed[3]);
@@ -92,7 +84,7 @@ public class KEntityListener extends EntityListener {
 		if (claim == null) return;
 		if (!(event2.getRemover() instanceof Player)) event.setCancelled(true);
 		Player player = (Player) event2.getRemover();
-		if (commonHandler(player, claim)) {
+		if (KiwiClaims.shouldPrevent(player, claim)) {
 			event.setCancelled(true);
 			player.sendMessage(this.not_allowed[1]);
 			player.sendMessage(this.not_allowed[2] + claim.getOwnerName() + this.not_allowed[3]);
@@ -103,7 +95,7 @@ public class KEntityListener extends EntityListener {
 		Player player = event.getPlayer();
 		KClaim claim = plugin.getClaimSave().getClaimAt(event.getPainting().getLocation());
 		if (claim == null) return;
-		if (commonHandler(player, claim)) {
+		if (KiwiClaims.shouldPrevent(player, claim)) {
 			event.setCancelled(true);
 			player.sendMessage(this.not_allowed[1]);
 			player.sendMessage(this.not_allowed[2] + claim.getOwnerName() + this.not_allowed[3]);

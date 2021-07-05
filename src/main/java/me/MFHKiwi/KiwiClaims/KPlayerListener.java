@@ -23,6 +23,7 @@ import java.util.Iterator;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
@@ -55,14 +56,6 @@ public class KPlayerListener extends PlayerListener {
 		this.not_allowed[0] = colour1 + "You are not allowed to use that here!";
 		this.not_allowed[1] = colour1 + "Ask the owner of this claim, " + colour2;
 		this.not_allowed[2] = colour1 + ", for permission.";
-	}
-	
-	public boolean commonHandler(Player player, KClaim claim) {
-		String player_name = player.getName();
-		if (!player_name.equals(claim.getOwnerName()) &&
-				!claim.getTrusted().contains(player_name) &&
-				!player.hasPermission("kc.admin")) return true;
-		else return false;
 	}
 	
 	public int handleSelection(KSelection sel) {
@@ -99,10 +92,33 @@ public class KPlayerListener extends PlayerListener {
 	
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
+		// Check if the player is trying to open a chest because Bukkit somehow didn't have an event for this.
 		if (event.getClickedBlock().getState() instanceof ContainerBlock && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			KClaim claim = plugin.getClaimSave().getClaimAt(event.getClickedBlock().getLocation());
 			if (claim == null) return;
-			if (commonHandler(player, claim)) {
+			if (KiwiClaims.shouldPrevent(player, claim)) {
+				event.setCancelled(true);
+				player.sendMessage(this.not_allowed[0]);
+				player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
+			}
+		}
+		// And it doesn't have an adequate listener for vehicle placement either...
+		else if (player.getItemInHand().getType().equals(Material.MINECART) && 
+				event.getClickedBlock().getType().equals(Material.RAILS) ||
+				event.getClickedBlock().getType().equals(Material.DETECTOR_RAIL) ||
+				event.getClickedBlock().getType().equals(Material.POWERED_RAIL)) {
+			KClaim claim = plugin.getClaimSave().getClaimAt(event.getClickedBlock().getLocation());
+			if (claim == null) return;
+			if (KiwiClaims.shouldPrevent(player, claim)) {
+				event.setCancelled(true);
+				player.sendMessage(this.not_allowed[0]);
+				player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
+			}
+		}
+		else if (player.getItemInHand().getType().equals(Material.BOAT)) {
+			KClaim claim = plugin.getClaimSave().getClaimAt(event.getClickedBlock().getLocation());
+			if (claim == null) return;
+			if (KiwiClaims.shouldPrevent(player, claim)) {
 				event.setCancelled(true);
 				player.sendMessage(this.not_allowed[0]);
 				player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
@@ -149,7 +165,7 @@ public class KPlayerListener extends PlayerListener {
 		Player player = event.getPlayer();
 		KClaim claim = plugin.getClaimSave().getClaimAt(bed.getLocation());
 		if (claim == null) return;
-		if (commonHandler(player, claim)) {
+		if (KiwiClaims.shouldPrevent(player, claim)) {
 			event.setCancelled(true);
 			player.sendMessage(this.not_allowed[0]);
 			player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
@@ -160,7 +176,7 @@ public class KPlayerListener extends PlayerListener {
 		Player player = event.getPlayer();
 		KClaim claim = plugin.getClaimSave().getClaimAt(event.getBlockClicked().getLocation());
 		if (claim == null) return;
-		if (commonHandler(player, claim)) {
+		if (KiwiClaims.shouldPrevent(player, claim)) {
 			event.setCancelled(true);
 			player.sendMessage(this.not_allowed[0]);
 			player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
@@ -171,7 +187,7 @@ public class KPlayerListener extends PlayerListener {
 		Player player = event.getPlayer();
 		KClaim claim = plugin.getClaimSave().getClaimAt(event.getBlockClicked().getLocation());
 		if (claim == null) return;
-		if (commonHandler(player, claim)) {
+		if (KiwiClaims.shouldPrevent(player, claim)) {
 			event.setCancelled(true);
 			player.sendMessage(this.not_allowed[0]);
 			player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);

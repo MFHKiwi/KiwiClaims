@@ -42,7 +42,7 @@ public class KCommandHandler implements CommandExecutor {
 		this.help_message[4] = colour2 + " - " + colour1 + "/kc unclaim/remove" + colour2 + ": Remove claim from area";
 		this.help_message[5] = colour2 + " - " + colour1 + "/kc trust <player name>" + colour2 + ": Trust player in claim";
 		this.help_message[6] = colour2 + " - " + colour1 + "/kc untrust <player name>" + colour2 + ": Untrust player in claim";
-		this.incorrect_usage = colour2 + "Incorrect usage. See " + colour1 + "/kc help" + colour2 + ".";
+		this.incorrect_usage = colour1 + "Incorrect usage. See " + colour2 + "/kc help" + colour1 + ".";
 		this.plugin_info = colour1 + plugin.getDescription().getFullName() + colour2 + " by MFHKiwi";
 		this.not_player = colour1 + "You must be a player to run this command.";
 		this.claim_message = colour2 + "Punch the opposite corners of the claim you with to create.";
@@ -57,8 +57,8 @@ public class KCommandHandler implements CommandExecutor {
 		this.no_permission = colour1 + "You do not have permission to do that.";
 	}
 	
-	private boolean commonHandler(Player player, KClaim claim) {
-		if (claim.getOwnerName().equals(player.getName()) || player.hasPermission("kc.admin")) return true;
+	private boolean shouldPrevent(Player player, KClaim claim) {
+		if (!claim.getOwnerName().equals(player.getName()) && !player.hasPermission("kc.admin")) return true;
 		return false;
 	}
 
@@ -101,9 +101,8 @@ public class KCommandHandler implements CommandExecutor {
 			KClaim claim = plugin.getClaimSave().getClaimAt(player.getLocation());
 			if (claim == null) {
 				player.sendMessage(this.not_in_claim);
-				return true;
 			}
-			if (!commonHandler(player, claim)) {
+			else if (shouldPrevent(player, claim)) {
 				player.sendMessage(this.not_allowed);
 			}
 			else {
@@ -113,11 +112,16 @@ public class KCommandHandler implements CommandExecutor {
 		}
 		else if (subcommand.equalsIgnoreCase("trust")) {
 			KClaim claim = plugin.getClaimSave().getClaimAt(player.getLocation());
-			if (claim == null) {
-				player.sendMessage(this.not_in_claim);
-				return true;
+			if (args.length < 2) {
+				player.sendMessage(this.incorrect_usage);
 			}
-			try {
+			else if (claim == null) {
+				player.sendMessage(this.not_in_claim);
+			}
+			else if (shouldPrevent(player, claim)) {
+				player.sendMessage(this.not_allowed);
+			}
+			else try {
 				if (!plugin.getClaimSave().addTrusted(claim, args[1])) {
 					player.sendMessage(this.already_trusted);
 				} else {
@@ -130,11 +134,16 @@ public class KCommandHandler implements CommandExecutor {
 		}
 		else if (subcommand.equalsIgnoreCase("untrust")) {
 			KClaim claim = plugin.getClaimSave().getClaimAt(player.getLocation());
-			if (claim == null) {
-				player.sendMessage(this.not_in_claim);
-				return true;
+			if (args.length < 2) {
+				player.sendMessage(this.incorrect_usage);
 			}
-			try {
+			else if (claim == null) {
+				player.sendMessage(this.not_in_claim);
+			}
+			else if (shouldPrevent(player, claim)) {
+				player.sendMessage(this.not_allowed);
+			}
+			else try {
 				if (!plugin.getClaimSave().removeTrusted(claim, args[1])) {
 					player.sendMessage(this.already_untrusted);
 				} else {

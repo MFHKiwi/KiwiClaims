@@ -39,11 +39,9 @@ public class KBlockListener extends BlockListener {
 	}
 	
 	public boolean commonHandler(Location block_location, Player player) {
-		String player_name = player.getName();
 		KClaim claim = plugin.getClaimSave().getClaimAt(block_location);
 		if (claim == null) return false;
-		if (!(player_name.equals(claim.getOwnerName())) && 
-			!(claim.getTrusted().contains(player_name))) {
+		if (KiwiClaims.shouldPrevent(player, claim)) {
 			player.sendMessage(this.not_allowed[0]);
 			player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
 			return true;

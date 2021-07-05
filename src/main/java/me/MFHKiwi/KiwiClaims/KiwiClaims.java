@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -34,6 +35,7 @@ public class KiwiClaims extends JavaPlugin {
 	private final KBlockListener block_listener = new KBlockListener(this);
 	private final KPlayerListener player_listener = new KPlayerListener(this);
 	private final KEntityListener entity_listener = new KEntityListener(this);
+	private final KVehicleListener vehicle_listener = new KVehicleListener(this);
 
 	public void onEnable() {
 		File claim_folder = new File(this.getDataFolder() + File.separator + "claims");
@@ -50,6 +52,7 @@ public class KiwiClaims extends JavaPlugin {
 		pm.registerEvent(Event.Type.PLAYER_BED_ENTER, (Listener) player_listener, Event.Priority.High, (Plugin) this);
 		pm.registerEvent(Event.Type.PLAYER_BUCKET_FILL, (Listener) player_listener, Event.Priority.High, (Plugin) this);
 		pm.registerEvent(Event.Type.PLAYER_BUCKET_EMPTY, (Listener) player_listener, Event.Priority.High, (Plugin) this);
+		pm.registerEvent(Event.Type.VEHICLE_DAMAGE, (Listener) vehicle_listener, Event.Priority.High, (Plugin) this);
 		this.getCommand("kc").setExecutor(new KCommandHandler(this, player_listener));
 		log("Plugin enabled.");
 	}
@@ -71,5 +74,14 @@ public class KiwiClaims extends JavaPlugin {
 		if (id == 1) return this.colour1;
 		else if (id == 2) return this.colour2;
 		else return null;
+	}
+	
+	// Common methods that classes use. Not worth creating a class for, so I'm putting it in here.
+	public static boolean shouldPrevent(Player player, KClaim claim) {
+		String player_name = player.getName();
+		if (!player_name.equals(claim.getOwnerName()) &&
+			!claim.getTrusted().contains(player_name) &&
+			!player.hasPermission("kc.admin")) return true;
+		else return false;
 	}
 }
