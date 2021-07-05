@@ -23,6 +23,7 @@ public class KVehicleListener extends VehicleListener {
 		if (claim == null) return;
 		if (!(event.getAttacker() instanceof Player)) {
 			event.setCancelled(true);
+			return;
 		}
 		Player player = (Player) event.getAttacker();
 		if (KiwiClaims.shouldPrevent(player, claim)) {

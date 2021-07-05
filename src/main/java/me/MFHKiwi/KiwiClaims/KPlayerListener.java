@@ -102,9 +102,10 @@ public class KPlayerListener extends PlayerListener {
 				player.sendMessage(this.not_allowed[0]);
 				player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
 			}
+			return;
 		}
 		// And it doesn't have an adequate listener for vehicle placement either...
-		else if (player.getItemInHand().getType().equals(Material.MINECART) &&
+		if (player.getItemInHand().getType().equals(Material.MINECART) &&
 				event.getAction().equals(Action.RIGHT_CLICK_BLOCK) &&
 				(event.getClickedBlock().getType().equals(Material.RAILS) ||
 				event.getClickedBlock().getType().equals(Material.DETECTOR_RAIL) ||
@@ -116,8 +117,10 @@ public class KPlayerListener extends PlayerListener {
 				player.sendMessage(this.not_allowed[0]);
 				player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
 			}
+			return;
 		}
-		else if (player.getItemInHand().getType().equals(Material.BOAT)) {
+		if (player.getItemInHand().getType().equals(Material.BOAT) &&
+				event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			KClaim claim = plugin.getClaimSave().getClaimAt(event.getClickedBlock().getLocation());
 			if (claim == null) return;
 			if (KiwiClaims.shouldPrevent(player, claim)) {
@@ -125,6 +128,7 @@ public class KPlayerListener extends PlayerListener {
 				player.sendMessage(this.not_allowed[0]);
 				player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
 			}
+			return;
 		}
 		if (selections.isEmpty()) return;
 		for (Iterator<KSelection> it = selections.iterator(); it.hasNext();) {

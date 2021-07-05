@@ -41,27 +41,21 @@ public class KBlockListener extends BlockListener {
 	public boolean commonHandler(Location block_location, Player player) {
 		KClaim claim = plugin.getClaimSave().getClaimAt(block_location);
 		if (claim == null) return false;
-		if (KiwiClaims.shouldPrevent(player, claim)) {
-			player.sendMessage(this.not_allowed[0]);
-			player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
-			return true;
-		}
-		return false;
+		if (!KiwiClaims.shouldPrevent(player, claim)) return false;
+		player.sendMessage(this.not_allowed[0]);
+		player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
+		return true;
 	}
 	
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (!event.getPlayer().hasPermission("kc.admin")) {
-			if (commonHandler(event.getBlock().getLocation(), event.getPlayer())) {
-				event.setCancelled(true);
-			}
+		if (commonHandler(event.getBlock().getLocation(), event.getPlayer())) {
+			event.setCancelled(true);
 		}
 	}
 	
 	public void onBlockPlace(BlockPlaceEvent event) {
-		if (!event.getPlayer().hasPermission("kc.admin")) {
-			if (commonHandler(event.getBlock().getLocation(), event.getPlayer())) {
-				event.setCancelled(true);
-			}
+		if (commonHandler(event.getBlock().getLocation(), event.getPlayer())) {
+			event.setCancelled(true);
 		}
 	}
 	
