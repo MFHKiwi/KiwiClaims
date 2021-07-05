@@ -103,10 +103,11 @@ public class KPlayerListener extends PlayerListener {
 			}
 		}
 		// And it doesn't have an adequate listener for vehicle placement either...
-		else if (player.getItemInHand().getType().equals(Material.MINECART) && 
-				event.getClickedBlock().getType().equals(Material.RAILS) ||
+		else if (player.getItemInHand().getType().equals(Material.MINECART) &&
+				event.getAction().equals(Action.RIGHT_CLICK_BLOCK) &&
+				(event.getClickedBlock().getType().equals(Material.RAILS) ||
 				event.getClickedBlock().getType().equals(Material.DETECTOR_RAIL) ||
-				event.getClickedBlock().getType().equals(Material.POWERED_RAIL)) {
+				event.getClickedBlock().getType().equals(Material.POWERED_RAIL))) {
 			KClaim claim = plugin.getClaimSave().getClaimAt(event.getClickedBlock().getLocation());
 			if (claim == null) return;
 			if (KiwiClaims.shouldPrevent(player, claim)) {
