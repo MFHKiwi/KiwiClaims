@@ -88,8 +88,9 @@ public class KCommandHandler implements CommandExecutor {
 		}
 		Player player = (Player) sender;
 		if (subcommand.equalsIgnoreCase("claim")) {
-			if (!listener.register(player)) return true;
-			player.sendMessage(this.claim_message);
+			if (listener.register(player)) {
+				player.sendMessage(this.claim_message);
+			}
 			return true;
 		}
 		if (subcommand.equalsIgnoreCase("unclaim") || subcommand.equalsIgnoreCase("remove")) {

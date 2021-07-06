@@ -48,8 +48,8 @@ public class KSelection {
 	}
 	
 	public boolean overlaps(Location min, Location max) {
-		if (this.min.getBlockX() < max.getBlockX() && this.max.getBlockX() > min.getBlockX() &&
-			this.min.getBlockZ() < max.getBlockZ() && this.max.getBlockZ() > min.getBlockZ()) {
+		if (this.min.getBlockX() <= max.getBlockX() && this.max.getBlockX() >= min.getBlockX() &&
+			this.min.getBlockZ() <= max.getBlockZ() && this.max.getBlockZ() >= min.getBlockZ()) {
 			return true;
 		} else {
 			return false;
