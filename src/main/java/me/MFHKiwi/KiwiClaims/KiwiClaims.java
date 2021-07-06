@@ -80,7 +80,7 @@ public class KiwiClaims extends JavaPlugin {
 	public static boolean shouldPrevent(Player player, KClaim claim) {
 		String player_name = player.getName();
 		if (!player_name.equals(claim.getOwnerName()) &&
-			!claim.getTrusted().contains(player_name) &&
+			!claim.isTrusted(player_name) &&
 			!player.hasPermission("kc.admin")) return true;
 		else return false;
 	}

@@ -95,7 +95,7 @@ public class KClaim {
 	
 	public boolean isTrusted(String name) {
 		for (String trusted_name : this.trusted_names) {
-			if (name.equals(trusted_name)) return true;
+			if (name.equalsIgnoreCase(trusted_name)) return true;
 		}
 		return false;
 	}
@@ -105,8 +105,8 @@ public class KClaim {
 	}
 	
 	public boolean addTrusted(String name) {
-		if (!this.trusted_names.contains(name) ) {
-			this.trusted_names.add(name);
+		if (!this.trusted_names.contains(name.toLowerCase()) ) {
+			this.trusted_names.add(name.toLowerCase());
 			return true;
 		} else {
 			return false;
@@ -114,8 +114,9 @@ public class KClaim {
 	}
 	
 	public boolean removeTrusted(String name) {
-		if (this.trusted_names.contains(name)) {
-			this.trusted_names.remove(name);
+		String lowercase_name = name.toLowerCase();
+		if (this.trusted_names.contains(lowercase_name)) {
+			this.trusted_names.remove(lowercase_name);
 			return true;
 		} else {
 			return false;
