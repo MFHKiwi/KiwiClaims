@@ -45,7 +45,7 @@ public class KCommandHandler implements CommandExecutor {
 		this.incorrect_usage = colour1 + "Incorrect usage. See " + colour2 + "/kc help" + colour1 + ".";
 		this.plugin_info = colour1 + plugin.getDescription().getFullName() + colour2 + " by MFHKiwi";
 		this.not_player = colour1 + "You must be a player to run this command.";
-		this.claim_message = colour2 + "Punch the opposite corners of the claim you with to create.";
+		this.claim_message = colour2 + "Select a claim by left and right clicking its opposite corners.";
 		this.not_in_claim = colour1 + "You must be standing in a claim to do that.";
 		this.unclaim_message = colour2 + "Claim removed.";
 		this.not_allowed = colour1 + "You must be owner of the claim to do that";
