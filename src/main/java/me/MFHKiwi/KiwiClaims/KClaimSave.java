@@ -34,13 +34,15 @@ import org.bukkit.World;
 public class KClaimSave {
 	private final KiwiClaims plugin;
 	private final String value_separator = ",";
-	private final File data_folder;
-	private List<KClaim> claims = new ArrayList<KClaim>();
+	private final File data_folder, exclusions_folder;
+	private List<KClaim> claims = new ArrayList<KClaim>(), exclusions = new ArrayList<KClaim>();
 	
-	public KClaimSave(KiwiClaims plugin, File data_folder) {
+	public KClaimSave(KiwiClaims plugin, File data_folder, File exclusions_folder) {
 		this.plugin = plugin;
 		this.data_folder = data_folder;
+		this.exclusions_folder = exclusions_folder;
 		if (!data_folder.exists()) data_folder.mkdirs();
+		if (!exclusions_folder.exists()) exclusions_folder.mkdirs();
 		reloadClaims();
 	}
 	
@@ -48,10 +50,14 @@ public class KClaimSave {
 		return this.claims;
 	}
 	
+	public List<KClaim> getExclusionList() {
+		return this.exclusions;
+	}
+	
 	public void reloadClaims() {
-		File[] files_list = data_folder.listFiles();
-		List<KClaim> claims = new ArrayList<KClaim>();
-		int failed_claims = 0;
+		File[] files_list = data_folder.listFiles(), exclusion_files_list = exclusions_folder.listFiles();
+		List<KClaim> claims = new ArrayList<KClaim>(), exclusions = new ArrayList<KClaim>();
+		int failed_claims = 0, failed_exclusions = 0;
 		for (File file : files_list) {
 			try {
 				claims.add(loadClaim(file));
@@ -60,8 +66,18 @@ public class KClaimSave {
 				failed_claims++;
 			}
 		}
+		for (File file : exclusion_files_list) {
+			try {
+				exclusions.add(loadClaim(file));
+			} catch (Exception e) {
+				plugin.log(e.getMessage());
+				failed_exclusions++;
+			}
+		}
 		this.claims = claims;
+		this.exclusions = exclusions;
 		plugin.log("Loaded " + claims.size() + " claims. " + failed_claims + " claims failed to load.");
+		plugin.log("Loaded " + exclusions.size() + " exclusions. " + failed_exclusions + " exclusions failed to load.");
 	}
 	
 	public void removeClaim(KClaim claim) {
@@ -70,6 +86,16 @@ public class KClaimSave {
 			if (claim.getUUID().equals(claim_from_list.getUUID())) {
 				it.remove();
 				new File(this.data_folder + File.separator + claim.getUUID().toString()).delete();
+			}
+		}
+	}
+	
+	public void removeExclusion(KClaim claim) {
+		for (Iterator<KClaim> it = this.exclusions.iterator(); it.hasNext();) {
+			KClaim claim_from_list = it.next();
+			if (claim.getUUID().equals(claim_from_list.getUUID())) {
+				it.remove();
+				new File(this.exclusions_folder + File.separator + claim.getUUID().toString()).delete();
 			}
 		}
 	}
@@ -89,8 +115,8 @@ public class KClaimSave {
 		}
 	}
 	
-	public void saveClaim(KClaim claim) throws Exception {
-		File file = new File(this.data_folder + File.separator + claim.getUUID().toString());
+	private void saveClaim(KClaim claim, File folder) throws Exception {
+		File file = new File(folder + File.separator + claim.getUUID().toString());
 		try {
 			file.createNewFile();
 			BufferedWriter out = new BufferedWriter(new FileWriter(file));
@@ -113,10 +139,20 @@ public class KClaimSave {
 	public void addClaim(KClaim claim) throws Exception {
 		this.claims.add(claim);
 		try {
-			saveClaim(claim);
+			saveClaim(claim, this.data_folder);
 		} catch (Exception e) {
 			this.claims.remove(this.claims.indexOf(claim));
 			throw new Exception("Could not create claim:" + e.getMessage());
+		}
+	}
+	
+	public void addExclusion(KClaim claim) throws Exception {
+		this.exclusions.add(claim);
+		try {
+			saveClaim(claim, this.exclusions_folder);
+		} catch (Exception e) {
+			this.claims.remove(this.exclusions.indexOf(claim));
+			throw new Exception("Could not create exclusion:" + e.getMessage());
 		}
 	}
 	
@@ -125,7 +161,7 @@ public class KClaimSave {
 		if (this.claims.get(i) == null) throw new Exception("Claim " + claim.getUUID().toString() + " not found");
 		if (claim.isTrusted(name)) return false;
 		claim.addTrusted(name);
-		saveClaim(claim);
+		saveClaim(claim, this.data_folder);
 		this.claims.set(i, claim);
 		return true;
 	}
@@ -135,23 +171,35 @@ public class KClaimSave {
 		if (this.claims.get(i) == null) throw new Exception("Claim " + claim.getUUID().toString() + " not found");
 		if (!claim.isTrusted(name)) return false;
 		claim.removeTrusted(name);
-		saveClaim(claim);
+		saveClaim(claim, this.data_folder);
 		this.claims.set(i, claim);
 		return true;
 	}
 	
 	public void saveClaims() {
-		if (this.claims.isEmpty()) return;
-		int failed_claims = 0;
-		for (KClaim claim : this.claims) {
-			try {
-				saveClaim(claim);
-			} catch (Exception e) {
-				plugin.log(e.getMessage());
-				failed_claims++;
+		int failed_claims = 0, failed_exclusions = 0;
+		if (!this.claims.isEmpty()) {
+			for (KClaim claim : this.claims) {
+				try {
+					saveClaim(claim, this.data_folder);
+				} catch (Exception e) {
+					plugin.log(e.getMessage());
+					failed_claims++;
+				}
+			}
+		}
+		if (!this.exclusions.isEmpty()) {
+			for (KClaim claim : this.exclusions) {
+				try {
+					saveClaim(claim, this.exclusions_folder);
+				} catch (Exception e) {
+					plugin.log(e.getMessage());
+					failed_exclusions++;
+				}
 			}
 		}
 		this.plugin.log("Saved " + claims.size() + " claims. " + failed_claims + " claims failed to save.");
+		this.plugin.log("Saved " + exclusions.size() + " exclusions. " + failed_exclusions + " exclusions failed to save.");
 	}
 	
 	private Location locationFromString(String string) throws Exception {
@@ -195,6 +243,13 @@ public class KClaimSave {
 	
 	public KClaim getClaimAt(Location location) {
 		for (KClaim claim : this.claims) {
+			if (claim.contains(location)) return claim;
+		}
+		return null;
+	}
+	
+	public KClaim getExclusionAt(Location location) {
+		for (KClaim claim : this.exclusions) {
 			if (claim.contains(location)) return claim;
 		}
 		return null;

@@ -26,7 +26,7 @@ import org.bukkit.entity.Player;
 public class KCommandHandler implements CommandExecutor {
 	private final KiwiClaims plugin;
 	private final KPlayerListener listener;
-	private final String[] help_message = new String[7];
+	private final String[] help_message = new String[9];
 	private final String incorrect_usage, plugin_info, not_player, claim_message, not_in_claim, unclaim_message, not_allowed, 
 	trust_message, already_trusted, untrust_message, already_untrusted, internal_error, no_permission;
 	
@@ -42,6 +42,8 @@ public class KCommandHandler implements CommandExecutor {
 		this.help_message[4] = colour2 + " - " + colour1 + "/kc unclaim/remove" + colour2 + ": Remove claim from area";
 		this.help_message[5] = colour2 + " - " + colour1 + "/kc trust <player name>" + colour2 + ": Trust player in claim";
 		this.help_message[6] = colour2 + " - " + colour1 + "/kc untrust <player name>" + colour2 + ": Untrust player in claim";
+		this.help_message[7] = colour2 + " - " + colour1 + "/kc exclude" + colour2 + ": Create exclusion zone";
+		this.help_message[8] = colour2 + " - " + colour1 + "/kc unexclude" + colour2 + ": Remove exclusion zone";
 		this.incorrect_usage = colour1 + "Incorrect usage. See " + colour2 + "/kc help" + colour1 + ".";
 		this.plugin_info = colour1 + plugin.getDescription().getFullName() + colour2 + " by MFHKiwi";
 		this.not_player = colour1 + "You must be a player to run this command.";
@@ -150,6 +152,27 @@ public class KCommandHandler implements CommandExecutor {
 			} catch (Exception e) {
 				plugin.log(e.getMessage());
 				player.sendMessage(this.internal_error);
+			}
+			return true;
+		}
+		if (!player.hasPermission("kc.admin")) {
+			player.sendMessage(this.no_permission);
+			return true;
+		}
+		if (subcommand.equalsIgnoreCase("exclude")) {
+			if (listener.registerExclusion(player)) {
+				player.sendMessage(this.claim_message);
+			}
+			return true;
+		}
+		if (subcommand.equalsIgnoreCase("unexclude")) {
+			KClaim claim = plugin.getClaimSave().getExclusionAt(player.getLocation());
+			if (claim == null) {
+				player.sendMessage(this.not_in_claim);
+			}
+			else {
+				plugin.getClaimSave().removeExclusion(claim);
+				player.sendMessage(this.unclaim_message);
 			}
 			return true;
 		}

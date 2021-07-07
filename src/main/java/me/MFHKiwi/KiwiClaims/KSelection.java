@@ -21,10 +21,12 @@ import org.bukkit.Location;
 
 public class KSelection {
 	private final String player;
+	private final boolean exclusion;
 	private Location min, max = null;
 	
-	public KSelection(String player) {
+	public KSelection(String player, boolean exclusion) {
 		this.player = player;
+		this.exclusion = exclusion;
 	}
 	
 	public String getPlayerName() {
@@ -37,6 +39,10 @@ public class KSelection {
 	
 	public Location getMax() {
 		return this.max;
+	}
+	
+	public boolean getExclusion() {
+		return this.exclusion;
 	}
 	
 	public void setMin(Location min) {

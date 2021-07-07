@@ -37,7 +37,7 @@ import org.bukkit.event.player.PlayerListener;
 public class KPlayerListener extends PlayerListener {
 	private final KiwiClaims plugin;
 	private final List<KSelection> selections = new ArrayList<KSelection>();
-	private final String internal_error, world_mismatch, overlap, claim_create;
+	private final String internal_error, world_mismatch, overlap, claim_create, exclusion_create;
 	private final String[] pos_set = new String[4];
 	private final String[] not_allowed = new String[3];
 	
@@ -49,6 +49,7 @@ public class KPlayerListener extends PlayerListener {
 		this.world_mismatch = colour1 + "Selections must be in the same world!";
 		this.overlap = colour1 + "Your selection overlaps another claim!";
 		this.claim_create = colour2 + "Claim created! Use " + colour1 + "/kc trust" + colour2 + " to allow others to build in it.";
+		this.exclusion_create = colour2 + "Exclusion created.";
 		this.pos_set[0] = colour2 + "Position ";
 		this.pos_set[1] = colour2 + " set (" + colour1 + "x: ";
 		this.pos_set[2] = colour1 + ", z: ";
@@ -81,7 +82,14 @@ public class KPlayerListener extends PlayerListener {
 		for (KClaim claim : plugin.getClaimSave().getClaimsList()) {
 			if (selection.overlaps(claim)) return 1;
 		}
+		for (KClaim claim : plugin.getClaimSave().getExclusionList()) {
+			if (selection.overlaps(claim)) return 1;
+		}
 		try {
+			if (selection.getExclusion()) {
+				plugin.getClaimSave().addExclusion((new KClaim(selection)));
+				return 4;
+			}
 			plugin.getClaimSave().addClaim((new KClaim(selection)));
 			return 0;
 		} catch (Exception e) {
@@ -143,6 +151,9 @@ public class KPlayerListener extends PlayerListener {
 			}
 			if (selection.getMin() != null && selection.getMax() != null) {
 				switch (handleSelection(selection)) {
+					case 4:
+						player.sendMessage(this.exclusion_create);
+						break;
 					case 3:
 						player.sendMessage(this.internal_error);
 						break;
@@ -165,7 +176,15 @@ public class KPlayerListener extends PlayerListener {
 		for (KSelection selection : this.selections) {
 			if (selection.getPlayerName().equals(player.getName())) return false;
 		}
-		this.selections.add(new KSelection(player.getName()));
+		this.selections.add(new KSelection(player.getName(), false));
+		return true;
+	}
+	
+	public boolean registerExclusion(Player player) {
+		for (KSelection selection : this.selections) {
+			if (selection.getPlayerName().equals(player.getName())) return false;
+		}
+		this.selections.add(new KSelection(player.getName(), true));
 		return true;
 	}
 	
