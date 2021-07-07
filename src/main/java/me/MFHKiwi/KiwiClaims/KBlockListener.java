@@ -26,6 +26,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.material.Bed;
 
 public class KBlockListener extends BlockListener {
@@ -74,6 +75,15 @@ public class KBlockListener extends BlockListener {
 		KClaim claim = plugin.getClaimSave().getClaimAt(event.getToBlock().getLocation());
 		if (claim == null) return;
 		if (!claim.contains(event.getBlock().getLocation())) {
+			event.setCancelled(true);
+		}
+	}
+	
+	public void onBlockSpread(BlockSpreadEvent event) {
+		if (!event.getSource().getType().equals(Material.FIRE)) return;
+		KClaim claim = plugin.getClaimSave().getClaimAt(event.getBlock().getLocation());
+		if (claim == null) return;
+		if (!claim.contains(event.getSource().getLocation())) {
 			event.setCancelled(true);
 		}
 	}
