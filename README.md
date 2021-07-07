@@ -7,6 +7,7 @@ Note: This plugin is currently NOT meant to be used in production. There WILL be
  * Claiming
  * Trusting
  * Block protection
+ * Storage protection
  * Entity protection
  * Farmland protection
  * Exclusion zones - admin claims whose sole functionality is to stop players from claiming in that area. This is to prevent having other dependencies, like WorldGuard for WorldGuard regions.
