@@ -19,11 +19,14 @@ package me.MFHKiwi.KiwiClaims;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.material.Bed;
 
 public class KBlockListener extends BlockListener {
 	private final KiwiClaims plugin;
@@ -54,7 +57,15 @@ public class KBlockListener extends BlockListener {
 	}
 	
 	public void onBlockPlace(BlockPlaceEvent event) {
-		if (commonHandler(event.getBlock().getLocation(), event.getPlayer())) {
+		Block block = event.getBlock();
+		Location block_location = block.getLocation();
+		Location head_location = block_location;
+		if (block.getType().equals(Material.BED_BLOCK)) {
+			Bed bed = (Bed) block.getState().getData();
+			head_location = block.getRelative(bed.getFacing()).getLocation();
+		}
+		if (commonHandler(block_location, event.getPlayer()) ||
+			commonHandler(head_location, event.getPlayer())) {
 			event.setCancelled(true);
 		}
 	}
