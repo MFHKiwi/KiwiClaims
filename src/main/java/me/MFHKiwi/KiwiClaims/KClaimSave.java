@@ -123,7 +123,7 @@ public class KClaimSave {
 	public boolean addTrusted(KClaim claim, String name) throws Exception {
 		int i = this.claims.indexOf(claim);
 		if (this.claims.get(i) == null) throw new Exception("Claim " + claim.getUUID().toString() + " not found");
-		if (claim.getTrusted().contains(name)) return false;
+		if (claim.isTrusted(name)) return false;
 		claim.addTrusted(name);
 		saveClaim(claim);
 		this.claims.set(i, claim);
@@ -133,7 +133,7 @@ public class KClaimSave {
 	public boolean removeTrusted(KClaim claim, String name) throws Exception {
 		int i = this.claims.indexOf(claim);
 		if (this.claims.get(i) == null) throw new Exception("Claim " + claim.getUUID().toString() + " not found");
-		if (!claim.getTrusted().contains(name)) return false;
+		if (!claim.isTrusted(name)) return false;
 		claim.removeTrusted(name);
 		saveClaim(claim);
 		this.claims.set(i, claim);
