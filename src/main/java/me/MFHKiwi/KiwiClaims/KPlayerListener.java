@@ -93,7 +93,7 @@ public class KPlayerListener extends PlayerListener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.getClickedBlock() == null) return;
 		Player player = event.getPlayer();
-		// Check if the player is trying to open a chest because Bukkit somehow didn't have an event for this.
+		// Bukkit somehow doesn't have an event for chest opening.
 		if (event.getClickedBlock().getState() instanceof ContainerBlock && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			KClaim claim = plugin.getClaimSave().getClaimAt(event.getClickedBlock().getLocation());
 			if (claim == null) return;
@@ -117,6 +117,15 @@ public class KPlayerListener extends PlayerListener {
 				event.setCancelled(true);
 				player.sendMessage(this.not_allowed[0]);
 				player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
+			}
+			return;
+		}
+		// Nor does it have one for soil trampling...
+		if (event.getClickedBlock().getType().equals(Material.SOIL) && event.getAction().equals(Action.PHYSICAL)) {
+			KClaim claim = plugin.getClaimSave().getClaimAt(event.getClickedBlock().getLocation());
+			if (claim == null) return;
+			if (KiwiClaims.shouldPrevent(player, claim)) {
+				event.setCancelled(true);
 			}
 			return;
 		}
