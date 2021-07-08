@@ -46,6 +46,7 @@ public class KiwiClaims extends JavaPlugin {
 		pm.registerEvent(Event.Type.BLOCK_PLACE, (Listener) block_listener, Event.Priority.High, (Plugin) this);
 		pm.registerEvent(Event.Type.BLOCK_FROMTO, (Listener) block_listener, Event.Priority.High, (Plugin) this);
 		pm.registerEvent(Event.Type.BLOCK_SPREAD, (Listener) block_listener, Event.Priority.High, (Plugin) this);
+		pm.registerEvent(Event.Type.BLOCK_PISTON_EXTEND, (Listener) block_listener, Event.Priority.High, (Plugin) this);
 		pm.registerEvent(Event.Type.ENTITY_DAMAGE, (Listener) entity_listener, Event.Priority.High, (Plugin) this);
 		pm.registerEvent(Event.Type.ENTITY_EXPLODE, (Listener) entity_listener, Event.Priority.High, (Plugin) this);
 		pm.registerEvent(Event.Type.PAINTING_BREAK, (Listener) entity_listener, Event.Priority.High, (Plugin) this);

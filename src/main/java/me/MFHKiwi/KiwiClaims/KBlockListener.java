@@ -25,6 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockListener;
+import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.material.Bed;
@@ -85,6 +86,25 @@ public class KBlockListener extends BlockListener {
 		if (claim == null) return;
 		if (!claim.contains(event.getSource().getLocation())) {
 			event.setCancelled(true);
+		}
+	}
+	
+	public void onBlockPistonExtend(BlockPistonExtendEvent event) {
+		Location block_location = event.getBlock().getLocation();
+		Location head_location = event.getBlock().getRelative(event.getDirection()).getLocation();
+		KClaim claim = plugin.getClaimSave().getClaimAt(block_location);
+		KClaim claim2 = plugin.getClaimSave().getClaimAt(head_location);
+		if (claim == null && claim2 != null) {
+			event.setCancelled(true);
+			return;
+		}
+		for (Block block_from_list : event.getBlocks()) {
+			if ((plugin.getClaimSave().getClaimAt(block_from_list.getLocation()) != null ||
+				plugin.getClaimSave().getClaimAt(block_from_list.getRelative(event.getDirection()).getLocation()) != null) &&
+				claim == null) {
+				event.setCancelled(true);
+				return;
+			}
 		}
 	}
 }
