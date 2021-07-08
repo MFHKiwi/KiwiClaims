@@ -1,7 +1,7 @@
 # KiwiClaims
 KiwiClaims is a claims plugin for CraftBukkit 1060 (and probably other CraftBukkits). It uses a selection interface similar to that of WorldEdit, and the claims work in a way similar to GriefPrevention.
 
-Note: This plugin is currently NOT meant to be used in production. There WILL be issues.
+Note: The main branch of this repository is NOT meant to be used in production. It's for development.
 
 ### Building:
 To compile KiwiClaims, you will need Apache Maven.
