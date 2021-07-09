@@ -22,6 +22,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockListener;
@@ -29,6 +31,8 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.material.Bed;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 
 public class KBlockListener extends BlockListener {
 	private final KiwiClaims plugin;
@@ -41,6 +45,15 @@ public class KBlockListener extends BlockListener {
 		this.not_allowed[0] = colour1 + "You are not allowed to build here!";
 		this.not_allowed[1] = colour1 + "Ask the owner of this claim, " + colour2;
 		this.not_allowed[2] = colour1 + ", for permission.";
+	}
+	
+	public void registerEvents() {
+		PluginManager pm = plugin.getServer().getPluginManager();
+		pm.registerEvent(Event.Type.BLOCK_BREAK, (Listener) this, Event.Priority.High, (Plugin) plugin);
+		pm.registerEvent(Event.Type.BLOCK_PLACE, (Listener) this, Event.Priority.High, (Plugin) plugin);
+		pm.registerEvent(Event.Type.BLOCK_FROMTO, (Listener) this, Event.Priority.High, (Plugin) plugin);
+		pm.registerEvent(Event.Type.BLOCK_SPREAD, (Listener) this, Event.Priority.High, (Plugin) plugin);
+		pm.registerEvent(Event.Type.BLOCK_PISTON_EXTEND, (Listener) this, Event.Priority.High, (Plugin) plugin);
 	}
 	
 	public boolean commonHandler(Location block_location, Player player) {

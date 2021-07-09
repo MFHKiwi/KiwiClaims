@@ -25,6 +25,8 @@ import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.WaterMob;
+import org.bukkit.event.Event;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -32,6 +34,8 @@ import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 import org.bukkit.event.painting.PaintingBreakEvent;
 import org.bukkit.event.painting.PaintingPlaceEvent;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 
 public class KEntityListener extends EntityListener {
 	private final KiwiClaims plugin;
@@ -45,6 +49,14 @@ public class KEntityListener extends EntityListener {
 		this.not_allowed[1] = colour1 + "You are not allowed to build here!";
 		this.not_allowed[2] = colour1 + "Ask the owner of this claim, " + colour2;
 		this.not_allowed[3] = colour1 + ", for permission.";
+	}
+	
+	public void registerEvents() {
+		PluginManager pm = plugin.getServer().getPluginManager();
+		pm.registerEvent(Event.Type.ENTITY_DAMAGE, (Listener) this, Event.Priority.High, (Plugin) plugin);
+		pm.registerEvent(Event.Type.ENTITY_EXPLODE, (Listener) this, Event.Priority.High, (Plugin) plugin);
+		pm.registerEvent(Event.Type.PAINTING_BREAK, (Listener) this, Event.Priority.High, (Plugin) plugin);
+		pm.registerEvent(Event.Type.PAINTING_PLACE, (Listener) this, Event.Priority.High, (Plugin) plugin);
 	}
 	
 	public void onEntityDamage(EntityDamageEvent event) {

@@ -27,12 +27,16 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 
 public class KPlayerListener extends PlayerListener {
 	private final KiwiClaims plugin;
@@ -57,6 +61,14 @@ public class KPlayerListener extends PlayerListener {
 		this.not_allowed[0] = colour1 + "You are not allowed to use that here!";
 		this.not_allowed[1] = colour1 + "Ask the owner of this claim, " + colour2;
 		this.not_allowed[2] = colour1 + ", for permission.";
+	}
+	
+	public void registerEvents() {
+		PluginManager pm = plugin.getServer().getPluginManager();
+		pm.registerEvent(Event.Type.PLAYER_INTERACT, (Listener) this, Event.Priority.High, (Plugin) plugin);
+		pm.registerEvent(Event.Type.PLAYER_BED_ENTER, (Listener) this, Event.Priority.High, (Plugin) plugin);
+		pm.registerEvent(Event.Type.PLAYER_BUCKET_FILL, (Listener) this, Event.Priority.High, (Plugin) plugin);
+		pm.registerEvent(Event.Type.PLAYER_BUCKET_EMPTY, (Listener) this, Event.Priority.High, (Plugin) plugin);
 	}
 	
 	public int handleSelection(KSelection sel) {
