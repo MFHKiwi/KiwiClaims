@@ -32,11 +32,5 @@
   		<type>jar</type>
   		<scope>provided</scope>
   	</dependency>
-  	<dependency>
-  		<groupId>org.yaml</groupId>
-  		<artifactId>snakeyaml</artifactId>
-  		<version>1.29</version>
-  		<scope>provided</scope>
-  	</dependency>
   </dependencies>
 </project>
