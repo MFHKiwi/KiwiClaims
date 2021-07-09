@@ -41,21 +41,10 @@ public class KiwiClaims extends JavaPlugin {
 		File claim_folder = new File(this.getDataFolder() + File.separator + "claims");
 		File exclusions_folder = new File(this.getDataFolder() + File.separator + "exclusions");
 		this.claim_save = new KClaimSave(this, claim_folder, exclusions_folder);
-		PluginManager pm = this.getServer().getPluginManager();
-		pm.registerEvent(Event.Type.BLOCK_BREAK, (Listener) block_listener, Event.Priority.High, (Plugin) this);
-		pm.registerEvent(Event.Type.BLOCK_PLACE, (Listener) block_listener, Event.Priority.High, (Plugin) this);
-		pm.registerEvent(Event.Type.BLOCK_FROMTO, (Listener) block_listener, Event.Priority.High, (Plugin) this);
-		pm.registerEvent(Event.Type.BLOCK_SPREAD, (Listener) block_listener, Event.Priority.High, (Plugin) this);
-		pm.registerEvent(Event.Type.BLOCK_PISTON_EXTEND, (Listener) block_listener, Event.Priority.High, (Plugin) this);
-		pm.registerEvent(Event.Type.ENTITY_DAMAGE, (Listener) entity_listener, Event.Priority.High, (Plugin) this);
-		pm.registerEvent(Event.Type.ENTITY_EXPLODE, (Listener) entity_listener, Event.Priority.High, (Plugin) this);
-		pm.registerEvent(Event.Type.PAINTING_BREAK, (Listener) entity_listener, Event.Priority.High, (Plugin) this);
-		pm.registerEvent(Event.Type.PAINTING_PLACE, (Listener) entity_listener, Event.Priority.High, (Plugin) this);
-		pm.registerEvent(Event.Type.PLAYER_INTERACT, (Listener) player_listener, Event.Priority.High, (Plugin) this);
-		pm.registerEvent(Event.Type.PLAYER_BED_ENTER, (Listener) player_listener, Event.Priority.High, (Plugin) this);
-		pm.registerEvent(Event.Type.PLAYER_BUCKET_FILL, (Listener) player_listener, Event.Priority.High, (Plugin) this);
-		pm.registerEvent(Event.Type.PLAYER_BUCKET_EMPTY, (Listener) player_listener, Event.Priority.High, (Plugin) this);
-		pm.registerEvent(Event.Type.VEHICLE_DAMAGE, (Listener) vehicle_listener, Event.Priority.High, (Plugin) this);
+		this.block_listener.registerEvents();
+		this.entity_listener.registerEvents();
+		this.player_listener.registerEvents();
+		this.vehicle_listener.registerEvents();
 		this.getCommand("kc").setExecutor(new KCommandHandler(this, player_listener));
 		log("Plugin enabled.");
 	}
