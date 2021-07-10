@@ -176,6 +176,16 @@ public class KClaimSave {
 		return true;
 	}
 	
+	public boolean setOwner(KClaim claim, String name) throws Exception {
+		int i = this.claims.indexOf(claim);
+		if (this.claims.get(i) == null) throw new Exception("Claim " + claim.getUUID().toString() + " not found");
+		if (claim.ownerEquals(name)) return false;
+		claim.setOwnerName(name);
+		saveClaim(claim, this.data_folder);
+		this.claims.set(i, claim);
+		return true;
+	}
+	
 	public void saveClaims() {
 		int failed_claims = 0, failed_exclusions = 0;
 		if (!this.claims.isEmpty()) {
