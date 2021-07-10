@@ -67,7 +67,7 @@ public class KiwiClaims extends JavaPlugin {
 	// Common methods that classes use. Not worth creating a class for, so I'm putting it in here.
 	public static boolean shouldPrevent(Player player, KClaim claim) {
 		String player_name = player.getName();
-		if (!player_name.equals(claim.getOwnerName()) &&
+		if (!claim.ownerEquals(player_name) &&
 			!claim.isTrusted(player_name) &&
 			!player.hasPermission("kc.admin")) return true;
 		else return false;

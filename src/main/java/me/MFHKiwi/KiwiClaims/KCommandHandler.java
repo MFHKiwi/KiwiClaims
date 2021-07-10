@@ -27,8 +27,9 @@ public class KCommandHandler implements CommandExecutor {
 	private final KiwiClaims plugin;
 	private final KPlayerListener listener;
 	private final String[] help_message = new String[9];
+	private final String[] owner_set = new String[2];
 	private final String incorrect_usage, plugin_info, not_player, claim_message, not_in_claim, unclaim_message, not_allowed, 
-	trust_message, already_trusted, untrust_message, already_untrusted, internal_error, no_permission;
+	trust_message, already_trusted, untrust_message, already_untrusted, internal_error, no_permission, already_owner;
 	
 	public KCommandHandler(KiwiClaims plugin, KPlayerListener listener) {
 		this.plugin = plugin;
@@ -50,17 +51,20 @@ public class KCommandHandler implements CommandExecutor {
 		this.claim_message = colour2 + "Select a claim by left and right clicking its opposite corners.";
 		this.not_in_claim = colour1 + "You must be standing in a claim to do that.";
 		this.unclaim_message = colour2 + "Claim removed.";
-		this.not_allowed = colour1 + "You must be owner of the claim to do that";
+		this.not_allowed = colour1 + "You must be owner of the claim to do that.";
 		this.trust_message = colour2 + "Player trusted.";
 		this.already_trusted = colour1 + "That player is already trusted in this claim.";
 		this.untrust_message = colour2 + "Player untrusted.";
 		this.already_untrusted = colour1 + "That player does not have trust in this claim.";
 		this.internal_error = colour1 + "Could not do this due to an internal plugin error. Contact staff about this.";
 		this.no_permission = colour1 + "You do not have permission to do that.";
+		this.already_owner = colour1 + "You already own this claim.";
+		this.owner_set[0] = colour2 + "Transferred claim to " + colour1;
+		this.owner_set[1] = colour2 + ".";
 	}
 	
 	private boolean shouldPrevent(Player player, KClaim claim) {
-		if (!claim.getOwnerName().equals(player.getName()) && !player.hasPermission("kc.admin")) return true;
+		if (!claim.ownerEquals(player.getName()) && !player.hasPermission("kc.admin")) return true;
 		return false;
 	}
 
@@ -148,6 +152,29 @@ public class KCommandHandler implements CommandExecutor {
 					player.sendMessage(this.already_untrusted);
 				} else {
 					player.sendMessage(this.untrust_message);
+				}
+			} catch (Exception e) {
+				plugin.log(e.getMessage());
+				player.sendMessage(this.internal_error);
+			}
+			return true;
+		}
+		if (subcommand.equalsIgnoreCase("transfer")) {
+			KClaim claim = plugin.getClaimSave().getClaimAt(player.getLocation());
+			if (args.length < 2) {
+				player.sendMessage(this.incorrect_usage);
+			}
+			else if (claim == null) {
+				player.sendMessage(this.not_in_claim);
+			}
+			else if (shouldPrevent(player, claim)) {
+				player.sendMessage(this.not_allowed);
+			}
+			else try {
+				if (!plugin.getClaimSave().setOwner(claim, args[1])) {
+					player.sendMessage(this.already_owner);
+				} else {
+					player.sendMessage(this.owner_set[0] + args[1] + this.owner_set[1]);
 				}
 			} catch (Exception e) {
 				plugin.log(e.getMessage());

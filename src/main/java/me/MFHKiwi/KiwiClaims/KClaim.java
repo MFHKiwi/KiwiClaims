@@ -47,7 +47,7 @@ public class KClaim {
 		}
 		this.min = new Location(min.getWorld(), x1, min.getBlockY(), z1);
 		this.max = new Location(max.getWorld(), x2, max.getBlockY(), z2);
-		this.owner_name = owner_name;
+		this.owner_name = owner_name.toLowerCase();
 		this.uuid = uuid;
 	}
 	
@@ -85,8 +85,17 @@ public class KClaim {
 		return this.max;
 	}
 	
+	public void setOwnerName(String name) {
+		this.owner_name = name.toLowerCase();
+	}
+	
 	public String getOwnerName() {
 		return this.owner_name;
+	}
+	
+	public boolean ownerEquals(String name) {
+		if (name.equalsIgnoreCase(this.owner_name)) return true;
+		return false;
 	}
 	
 	public UUID getUUID() {
