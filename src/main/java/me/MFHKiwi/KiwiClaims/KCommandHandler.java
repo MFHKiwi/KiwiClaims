@@ -22,6 +22,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
+import me.MFHKiwi.KiwiClaims.KVisualisation.Type;
 
 public class KCommandHandler implements CommandExecutor {
 	private final KiwiClaims plugin;
@@ -30,6 +33,7 @@ public class KCommandHandler implements CommandExecutor {
 	private final String[] owner_set = new String[2];
 	private final String incorrect_usage, plugin_info, not_player, claim_message, not_in_claim, unclaim_message, not_allowed, 
 	trust_message, already_trusted, untrust_message, already_untrusted, internal_error, no_permission, already_owner;
+	
 	
 	public KCommandHandler(KiwiClaims plugin, KPlayerListener listener) {
 		this.plugin = plugin;
@@ -179,6 +183,16 @@ public class KCommandHandler implements CommandExecutor {
 			} catch (Exception e) {
 				plugin.log(e.getMessage());
 				player.sendMessage(this.internal_error);
+			}
+			return true;
+		}
+		if (subcommand.equalsIgnoreCase("visualise") || subcommand.equalsIgnoreCase("vis")) {
+			KClaim claim = plugin.getClaimSave().getClaimAt(player.getLocation());
+			if (claim == null) {
+				player.sendMessage(this.not_in_claim);
+			}
+			else {
+				plugin.getServer().getScheduler().scheduleAsyncDelayedTask((Plugin) plugin, new KVisualisation(player, claim, Type.INFO));
 			}
 			return true;
 		}
