@@ -29,7 +29,7 @@ import me.MFHKiwi.KiwiClaims.KVisualisation.Type;
 public class KCommandHandler implements CommandExecutor {
 	private final KiwiClaims plugin;
 	private final KPlayerListener listener;
-	private final String[] help_message = new String[9];
+	private final String[] help_message = new String[10];
 	private final String[] owner_set = new String[2];
 	private final String incorrect_usage, plugin_info, not_player, claim_message, not_in_claim, unclaim_message, not_allowed, 
 	trust_message, already_trusted, untrust_message, already_untrusted, internal_error, no_permission, already_owner;
@@ -49,6 +49,7 @@ public class KCommandHandler implements CommandExecutor {
 		this.help_message[6] = colour2 + " - " + colour1 + "/kc untrust <player name>" + colour2 + ": Untrust player in claim";
 		this.help_message[7] = colour2 + " - " + colour1 + "/kc exclude" + colour2 + ": Create exclusion zone";
 		this.help_message[8] = colour2 + " - " + colour1 + "/kc unexclude" + colour2 + ": Remove exclusion zone";
+		this.help_message[9] = colour2 + " - " + colour1 + "/kc visualise/vis" + colour2 + ": Visualise claim corners";
 		this.incorrect_usage = colour1 + "Incorrect usage. See " + colour2 + "/kc help" + colour1 + ".";
 		this.plugin_info = colour1 + plugin.getDescription().getFullName() + colour2 + " by MFHKiwi";
 		this.not_player = colour1 + "You must be a player to run this command.";
