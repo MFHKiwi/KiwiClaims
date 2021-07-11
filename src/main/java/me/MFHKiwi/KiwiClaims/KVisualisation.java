@@ -9,20 +9,27 @@ import org.bukkit.entity.Player;
 
 public class KVisualisation implements Runnable {
 	private final Player player;
-	private final KClaim claim;
+	private final Location minA, minB, maxA, maxB;
 	private final List<Location> locations = new ArrayList<Location>();
 	
 	public enum Type {INFO, ERROR};
 	private final Type type;
 	
 	public KVisualisation(Player player, KClaim claim, Type type) {
+		this(player, claim.getMin(), claim.getMax(), type);
+	}
+	
+	public KVisualisation(Player player, Location min, Location max, Type type) {
 		this.player = player;
-		this.claim = claim;
+		this.minA = min;
+		this.minB = new Location(min.getWorld(), min.getX(), min.getY(), max.getZ());
+		this.maxA = max;
+		this.maxB = new Location(min.getWorld(), max.getX(), max.getY(), min.getZ());
 		this.type = type;
 	}
 	
 	private void pillar(Player player, Location location) {
-		Material material = (type == Type.INFO) ? Material.GLOWSTONE : Material.REDSTONE;
+		Material material = (type == Type.INFO) ? Material.GLOWSTONE : Material.OBSIDIAN;
 		for (int i = 0; i <= 256; i++) {
 			Location location_height = new Location(location.getWorld(), location.getX(), i, location.getZ());
 			player.sendBlockChange(location_height, material, (byte) 0);
@@ -37,12 +44,10 @@ public class KVisualisation implements Runnable {
 	}
 
 	public void run() {
-		pillar(player, claim.getMin());
-		pillar(player, claim.getMax());
-		Location min2 = new Location(claim.getMin().getWorld(), claim.getMin().getX(), claim.getMin().getY(), claim.getMax().getZ());
-		Location max2 = new Location(claim.getMin().getWorld(), claim.getMax().getX(), claim.getMax().getY(), claim.getMin().getZ());
-		pillar(player, min2);
-		pillar(player, max2);
+		pillar(player, this.minA);
+		pillar(player, this.maxA);
+		pillar(player, this.minB);
+		pillar(player, this.maxB);
 		try {
 			Thread.sleep(20000);
 		} catch (InterruptedException e) {}

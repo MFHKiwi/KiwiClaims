@@ -35,8 +35,11 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+
+import me.MFHKiwi.KiwiClaims.KVisualisation.Type;
 
 public class KPlayerListener extends PlayerListener {
 	private final KiwiClaims plugin;
@@ -69,11 +72,16 @@ public class KPlayerListener extends PlayerListener {
 		pm.registerEvent(Event.Type.PLAYER_BED_ENTER, (Listener) this, Event.Priority.High, (Plugin) plugin);
 		pm.registerEvent(Event.Type.PLAYER_BUCKET_FILL, (Listener) this, Event.Priority.High, (Plugin) plugin);
 		pm.registerEvent(Event.Type.PLAYER_BUCKET_EMPTY, (Listener) this, Event.Priority.High, (Plugin) plugin);
+		pm.registerEvent(Event.Type.PLAYER_QUIT, (Listener) this, Event.Priority.High, (Plugin) plugin);
 	}
 	
-	public int handleSelection(KSelection sel) {
+	public void handleSelection(KSelection sel) {
 		KSelection selection = sel;
-		if (!selection.getMin().getWorld().equals(selection.getMax().getWorld())) return 2;
+		Player player = plugin.getServer().getPlayer(selection.getPlayerName());
+		if (!selection.getMin().getWorld().equals(selection.getMax().getWorld())) {
+			player.sendMessage(this.world_mismatch);
+			return;
+		}
 		int x1, z1, x2, z2, temp;
 		x1 = selection.getMin().getBlockX();
 		z1 = selection.getMin().getBlockZ();
@@ -92,21 +100,33 @@ public class KPlayerListener extends PlayerListener {
 		selection.setMin(new Location(selection.getMin().getWorld(), x1, selection.getMin().getBlockY(), z1));
 		selection.setMax(new Location(selection.getMax().getWorld(), x2, selection.getMax().getBlockY(), z2));
 		for (KClaim claim : plugin.getClaimSave().getClaimsList()) {
-			if (selection.overlaps(claim)) return 1;
+			if (selection.overlaps(claim)) {
+				plugin.getServer().getScheduler().scheduleAsyncDelayedTask((Plugin) plugin, new KVisualisation(player, claim, Type.ERROR));
+				player.sendMessage(this.overlap);
+				return;
+			}
 		}
 		for (KClaim claim : plugin.getClaimSave().getExclusionList()) {
-			if (selection.overlaps(claim)) return 1;
+			if (selection.overlaps(claim)) {
+				plugin.getServer().getScheduler().scheduleAsyncDelayedTask((Plugin) plugin, new KVisualisation(player, claim, Type.ERROR));
+				player.sendMessage(this.overlap);
+				return;
+			}
 		}
 		try {
+			KClaim claim = new KClaim(selection);
 			if (selection.getExclusion()) {
-				plugin.getClaimSave().addExclusion((new KClaim(selection)));
-				return 4;
+				plugin.getClaimSave().addExclusion(claim);
+				player.sendMessage(this.exclusion_create);
+				return;
 			}
-			plugin.getClaimSave().addClaim((new KClaim(selection)));
-			return 0;
+			plugin.getClaimSave().addClaim(claim);
+			player.sendMessage(this.claim_create);
+			plugin.getServer().getScheduler().scheduleAsyncDelayedTask((Plugin) plugin, new KVisualisation(player, claim, Type.INFO));
 		} catch (Exception e) {
 			plugin.log(e.getMessage());
-			return 3;
+			player.sendMessage(this.internal_error);
+			return;
 		}
 	}
 	
@@ -162,23 +182,9 @@ public class KPlayerListener extends PlayerListener {
 				player.sendMessage(this.pos_set[0] + "2" + this.pos_set[1] + selection.getMax().getBlockX() + this.pos_set[2] + selection.getMax().getBlockZ() + this.pos_set[3]);
 			}
 			if (selection.getMin() != null && selection.getMax() != null) {
-				switch (handleSelection(selection)) {
-					case 4:
-						player.sendMessage(this.exclusion_create);
-						break;
-					case 3:
-						player.sendMessage(this.internal_error);
-						break;
-					case 2:
-						player.sendMessage(this.world_mismatch);
-						break;
-					case 1:
-						player.sendMessage(this.overlap);
-						break;
-					case 0:
-						player.sendMessage(this.claim_create);
-						break;
-				}
+				player.sendBlockChange(selection.getMin(), selection.getMin().getBlock().getType(), (byte) 0);
+				player.sendBlockChange(selection.getMax(), selection.getMax().getBlock().getType(), (byte) 0);
+				handleSelection(selection);
 				it.remove();
 			}
 		}
@@ -231,6 +237,13 @@ public class KPlayerListener extends PlayerListener {
 			event.setCancelled(true);
 			player.sendMessage(this.not_allowed[0]);
 			player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
+		}
+	}
+	
+	public void onPlayerQuit(PlayerQuitEvent event) {
+		for (Iterator<KSelection> it = selections.iterator(); it.hasNext();) {
+			KSelection selection = it.next();
+			if (selection.getPlayerName().equalsIgnoreCase(event.getPlayer().getName())) it.remove();
 		}
 	}
 }
