@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 public class KVisualisation implements Runnable {
 	private final Player player;
-	private final Location minA, minB, maxA, maxB;
+	private final Location[] corners = new Location[4];
 	private final List<Location> locations = new ArrayList<Location>();
 	
 	public enum Type {INFO, ERROR};
@@ -21,10 +21,10 @@ public class KVisualisation implements Runnable {
 	
 	public KVisualisation(Player player, Location min, Location max, Type type) {
 		this.player = player;
-		this.minA = min;
-		this.minB = new Location(min.getWorld(), min.getX(), min.getY(), max.getZ());
-		this.maxA = max;
-		this.maxB = new Location(min.getWorld(), max.getX(), max.getY(), min.getZ());
+		this.corners[0] = min;
+		this.corners[1] = new Location(min.getWorld(), min.getX(), min.getY(), max.getZ());
+		this.corners[2] = max;
+		this.corners[3] = new Location(min.getWorld(), max.getX(), max.getY(), min.getZ());
 		this.type = type;
 	}
 	
@@ -44,10 +44,9 @@ public class KVisualisation implements Runnable {
 	}
 
 	public void run() {
-		pillar(player, this.minA);
-		pillar(player, this.maxA);
-		pillar(player, this.minB);
-		pillar(player, this.maxB);
+		for (Location corner : this.corners) {
+			pillar(player, corner);
+		}
 		try {
 			Thread.sleep(20000);
 		} catch (InterruptedException e) {}
