@@ -34,6 +34,7 @@ public class KiwiClaims extends JavaPlugin {
 	private final KVehicleListener vehicle_listener = new KVehicleListener(this);
 
 	public void onEnable() {
+		log("Plugin enabling...");
 		File claim_folder = new File(this.getDataFolder() + File.separator + "claims");
 		File exclusions_folder = new File(this.getDataFolder() + File.separator + "exclusions");
 		this.claim_save = new KClaimSave(this, claim_folder, exclusions_folder);
@@ -43,6 +44,7 @@ public class KiwiClaims extends JavaPlugin {
 		this.vehicle_listener.registerEvents();
 		this.getCommand("kc").setExecutor(new KCommandHandler(this, player_listener));
 		log("Plugin enabled.");
+		log("This plugin is licensed under the GNU General Public License v3. A copy of the license is included in the plugin Jar.");
 	}
 	
 	public void onDisable() {
