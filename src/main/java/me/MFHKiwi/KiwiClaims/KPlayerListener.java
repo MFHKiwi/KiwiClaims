@@ -35,6 +35,7 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -47,6 +48,7 @@ public class KPlayerListener extends PlayerListener {
 	private final String internal_error, world_mismatch, overlap, claim_create, exclusion_create;
 	private final String[] pos_set = new String[4];
 	private final String[] not_allowed = new String[3];
+	private final String[] claim_enter_leave = new String[3];
 	
 	public KPlayerListener(KiwiClaims plugin) {
 		this.plugin = plugin;
@@ -64,6 +66,9 @@ public class KPlayerListener extends PlayerListener {
 		this.not_allowed[0] = colour1 + "You are not allowed to use that here!";
 		this.not_allowed[1] = colour1 + "Ask the owner of this claim, " + colour2;
 		this.not_allowed[2] = colour1 + ", for permission.";
+		this.claim_enter_leave[0] = colour2 + "Entering " + colour1;
+		this.claim_enter_leave[1] = colour2 + "Leaving " + colour1;
+		this.claim_enter_leave[2] = colour2 + "'s claim.";
 	}
 	
 	public void registerEvents() {
@@ -73,6 +78,7 @@ public class KPlayerListener extends PlayerListener {
 		pm.registerEvent(Event.Type.PLAYER_BUCKET_FILL, (Listener) this, Event.Priority.High, (Plugin) plugin);
 		pm.registerEvent(Event.Type.PLAYER_BUCKET_EMPTY, (Listener) this, Event.Priority.High, (Plugin) plugin);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, (Listener) this, Event.Priority.High, (Plugin) plugin);
+		pm.registerEvent(Event.Type.PLAYER_MOVE, (Listener) this, Event.Priority.High, (Plugin) plugin);
 	}
 	
 	public void handleSelection(KSelection sel) {
@@ -206,6 +212,17 @@ public class KPlayerListener extends PlayerListener {
 		return true;
 	}
 	
+	public boolean unregister(Player player) {
+		for (Iterator<KSelection> it = this.selections.iterator(); it.hasNext();) {
+			KSelection selection = it.next();
+			if (selection.getPlayerName().equalsIgnoreCase(player.getName())) {
+				it.remove();
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public void onPlayerBedEnter(PlayerBedEnterEvent event) {
 		Block bed = event.getBed();
 		Player player = event.getPlayer();
@@ -241,9 +258,20 @@ public class KPlayerListener extends PlayerListener {
 	}
 	
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		for (Iterator<KSelection> it = selections.iterator(); it.hasNext();) {
-			KSelection selection = it.next();
-			if (selection.getPlayerName().equalsIgnoreCase(event.getPlayer().getName())) it.remove();
+		unregister(event.getPlayer());
+	}
+	
+	public void onPlayerMove(PlayerMoveEvent event) {
+		KClaim claim_at_from = plugin.getClaimSave().getClaimAt(event.getFrom());
+		KClaim claim_at_to = plugin.getClaimSave().getClaimAt(event.getTo());
+		Player player = event.getPlayer();
+		if (claim_at_from == null && claim_at_to == null) return;
+		else if (claim_at_from == null && claim_at_to != null) {
+			player.sendMessage(this.claim_enter_leave[0] + claim_at_to.getOwnerName() + this.claim_enter_leave[2]);
+			return;
+		}
+		else if (claim_at_from != null && claim_at_to == null) {
+			player.sendMessage(this.claim_enter_leave[1] + claim_at_from.getOwnerName() + this.claim_enter_leave[2]);
 		}
 	}
 }

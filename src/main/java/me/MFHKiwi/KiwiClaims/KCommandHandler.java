@@ -29,10 +29,10 @@ import me.MFHKiwi.KiwiClaims.KVisualisation.Type;
 public class KCommandHandler implements CommandExecutor {
 	private final KiwiClaims plugin;
 	private final KPlayerListener listener;
-	private final String[] help_message = new String[10];
+	private final String[] help_message = new String[11];
 	private final String[] owner_set = new String[2];
 	private final String incorrect_usage, plugin_info, not_player, claim_message, not_in_claim, unclaim_message, not_allowed, 
-	trust_message, already_trusted, untrust_message, already_untrusted, internal_error, no_permission, already_owner;
+	trust_message, already_trusted, untrust_message, already_untrusted, internal_error, no_permission, already_owner, selection_cancelled, no_selection;
 	
 	
 	public KCommandHandler(KiwiClaims plugin, KPlayerListener listener) {
@@ -44,12 +44,13 @@ public class KCommandHandler implements CommandExecutor {
 		this.help_message[1] = colour2 + " - " + colour1 + "/kc help" + colour2 + ": Show this help screen";
 		this.help_message[2] = colour2 + " - " + colour1 + "/kc info" + colour2 + ": Show plugin info";
 		this.help_message[3] = colour2 + " - " + colour1 + "/kc claim" + colour2 + ": Claim an area";
-		this.help_message[4] = colour2 + " - " + colour1 + "/kc unclaim/remove" + colour2 + ": Remove claim from area";
-		this.help_message[5] = colour2 + " - " + colour1 + "/kc trust <player name>" + colour2 + ": Trust player in claim";
-		this.help_message[6] = colour2 + " - " + colour1 + "/kc untrust <player name>" + colour2 + ": Untrust player in claim";
-		this.help_message[7] = colour2 + " - " + colour1 + "/kc exclude" + colour2 + ": Create exclusion zone";
-		this.help_message[8] = colour2 + " - " + colour1 + "/kc unexclude" + colour2 + ": Remove exclusion zone";
-		this.help_message[9] = colour2 + " - " + colour1 + "/kc visualise/vis" + colour2 + ": Visualise claim corners";
+		this.help_message[4] = colour2 + " - " + colour1 + "/kc cancel" + colour2 + ": Cancel claim selection";
+		this.help_message[5] = colour2 + " - " + colour1 + "/kc unclaim/remove" + colour2 + ": Remove claim from area";
+		this.help_message[6] = colour2 + " - " + colour1 + "/kc trust <player name>" + colour2 + ": Trust player in claim";
+		this.help_message[7] = colour2 + " - " + colour1 + "/kc untrust <player name>" + colour2 + ": Untrust player in claim";
+		this.help_message[8] = colour2 + " - " + colour1 + "/kc exclude" + colour2 + ": Create exclusion zone";
+		this.help_message[9] = colour2 + " - " + colour1 + "/kc unexclude" + colour2 + ": Remove exclusion zone";
+		this.help_message[10] = colour2 + " - " + colour1 + "/kc visualise/vis" + colour2 + ": Visualise claim corners";
 		this.incorrect_usage = colour1 + "Incorrect usage. See " + colour2 + "/kc help" + colour1 + ".";
 		this.plugin_info = colour1 + plugin.getDescription().getFullName() + colour2 + " by MFHKiwi";
 		this.not_player = colour1 + "You must be a player to run this command.";
@@ -66,6 +67,8 @@ public class KCommandHandler implements CommandExecutor {
 		this.already_owner = colour1 + "You already own this claim.";
 		this.owner_set[0] = colour2 + "Transferred claim to " + colour1;
 		this.owner_set[1] = colour2 + ".";
+		this.selection_cancelled = colour2 + "Selection cancelled.";
+		this.no_selection = colour1 + "You have not started a selection.";
 	}
 	
 	private boolean shouldPrevent(Player player, KClaim claim) {
@@ -194,6 +197,14 @@ public class KCommandHandler implements CommandExecutor {
 			}
 			else {
 				plugin.getServer().getScheduler().scheduleAsyncDelayedTask((Plugin) plugin, new KVisualisation(player, claim, Type.INFO));
+			}
+			return true;
+		}
+		if (subcommand.equalsIgnoreCase("cancel")) {
+			if (!listener.unregister(player)) {
+				player.sendMessage(this.no_selection);
+			} else {
+				player.sendMessage(this.selection_cancelled);
 			}
 			return true;
 		}
