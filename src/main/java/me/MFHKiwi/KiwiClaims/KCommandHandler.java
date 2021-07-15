@@ -31,7 +31,8 @@ public class KCommandHandler implements CommandExecutor {
 	private final KPlayerListener listener;
 	private final String[] help_message = new String[11];
 	private final String[] owner_set = new String[2];
-	private final String incorrect_usage, plugin_info, not_player, claim_message, not_in_claim, unclaim_message, not_allowed, 
+	private final String[] plugin_info = new String[2];
+	private final String incorrect_usage, not_player, claim_message, not_in_claim, unclaim_message, not_allowed, 
 	trust_message, already_trusted, untrust_message, already_untrusted, internal_error, no_permission, already_owner, selection_cancelled, no_selection;
 	
 	
@@ -52,7 +53,8 @@ public class KCommandHandler implements CommandExecutor {
 		this.help_message[9] = colour2 + " - " + colour1 + "/kc unexclude" + colour2 + ": Remove exclusion zone";
 		this.help_message[10] = colour2 + " - " + colour1 + "/kc visualise/vis" + colour2 + ": Visualise claim corners";
 		this.incorrect_usage = colour1 + "Incorrect usage. See " + colour2 + "/kc help" + colour1 + ".";
-		this.plugin_info = colour1 + plugin.getDescription().getFullName() + colour2 + " by MFHKiwi";
+		this.plugin_info[0] = colour1 + plugin.getDescription().getFullName() + colour2 + " by MFHKiwi";
+		this.plugin_info[1] = colour2 + "This plugin is licensed under the " + colour1 + "GNU GPL v3" + colour2 + ".";
 		this.not_player = colour1 + "You must be a player to run this command.";
 		this.claim_message = colour2 + "Select a claim by left and right clicking its opposite corners.";
 		this.not_in_claim = colour1 + "You must be standing in a claim to do that.";
@@ -83,7 +85,9 @@ public class KCommandHandler implements CommandExecutor {
 		}
 		String subcommand = args[0];
 		if (subcommand.equalsIgnoreCase("info")) {
-			sender.sendMessage(this.plugin_info);
+			for (String string : this.plugin_info) {
+				sender.sendMessage(string);
+			}
 			return true;
 		}
 		if (!sender.hasPermission("kc.use")) {
