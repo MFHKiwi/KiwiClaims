@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package me.MFHKiwi.KiwiClaims;
+package me.MFHKiwi.KiwiClaims.Listeners;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
-import me.MFHKiwi.KiwiClaims.KVisualisation.Type;
+import me.MFHKiwi.KiwiClaims.KClaim;
+import me.MFHKiwi.KiwiClaims.KSelection;
+import me.MFHKiwi.KiwiClaims.KiwiClaims;
+import me.MFHKiwi.KiwiClaims.Utilities.KVisualisation;
+import me.MFHKiwi.KiwiClaims.Utilities.KVisualisation.Type;
 
 public class KPlayerListener extends PlayerListener {
 	private final KiwiClaims plugin;

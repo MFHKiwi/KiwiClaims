@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package me.MFHKiwi.KiwiClaims;
+package me.MFHKiwi.KiwiClaims.Listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -24,7 +24,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import me.MFHKiwi.KiwiClaims.KVisualisation.Type;
+import me.MFHKiwi.KiwiClaims.KClaim;
+import me.MFHKiwi.KiwiClaims.KiwiClaims;
+import me.MFHKiwi.KiwiClaims.Utilities.KVisualisation;
+import me.MFHKiwi.KiwiClaims.Utilities.KVisualisation.Type;
 
 public class KCommandHandler implements CommandExecutor {
 	private final KiwiClaims plugin;

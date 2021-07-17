@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package me.MFHKiwi.KiwiClaims;
+package me.MFHKiwi.KiwiClaims.Listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -25,6 +25,9 @@ import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleListener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+
+import me.MFHKiwi.KiwiClaims.KClaim;
+import me.MFHKiwi.KiwiClaims.KiwiClaims;
 
 public class KVehicleListener extends VehicleListener {
 	private final KiwiClaims plugin;
