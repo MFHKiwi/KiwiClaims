@@ -17,6 +17,9 @@
  */
 package me.MFHKiwi.KiwiClaims.Listeners;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,8 +27,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import me.MFHKiwi.KiwiClaims.KClaim;
 import me.MFHKiwi.KiwiClaims.KiwiClaims;
+import me.MFHKiwi.KiwiClaims.IO.KDataHandler;
 import me.MFHKiwi.KiwiClaims.Utilities.KVisualisation;
 import me.MFHKiwi.KiwiClaims.Utilities.KVisualisation.Type;
 

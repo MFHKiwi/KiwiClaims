@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package me.MFHKiwi.KiwiClaims;
+package me.MFHKiwi.KiwiClaims.IO;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -30,6 +30,9 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+
+import me.MFHKiwi.KiwiClaims.KClaim;
+import me.MFHKiwi.KiwiClaims.KiwiClaims;
 
 public class KClaimSave {
 	private final KiwiClaims plugin;
