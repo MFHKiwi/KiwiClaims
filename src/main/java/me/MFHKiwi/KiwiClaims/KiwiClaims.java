@@ -24,7 +24,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.MFHKiwi.KiwiClaims.IO.KClaimSave;
+import me.MFHKiwi.KiwiClaims.IO.KDataHandler;
 import me.MFHKiwi.KiwiClaims.Listeners.KBlockListener;
 import me.MFHKiwi.KiwiClaims.Listeners.KCommandHandler;
 import me.MFHKiwi.KiwiClaims.Listeners.KEntityListener;
@@ -32,7 +32,7 @@ import me.MFHKiwi.KiwiClaims.Listeners.KPlayerListener;
 import me.MFHKiwi.KiwiClaims.Listeners.KVehicleListener;
 
 public class KiwiClaims extends JavaPlugin {
-	private KClaimSave claim_save;
+	private KDataHandler claim_save;
 	private ChatColor colour1 = ChatColor.RED;
 	private ChatColor colour2 = ChatColor.DARK_AQUA;
 	private final KBlockListener block_listener = new KBlockListener(this);
@@ -42,9 +42,9 @@ public class KiwiClaims extends JavaPlugin {
 
 	public void onEnable() {
 		log("Plugin enabling...");
-		File claim_folder = new File(this.getDataFolder() + File.separator + "claims");
-		File exclusions_folder = new File(this.getDataFolder() + File.separator + "exclusions");
-		this.claim_save = new KClaimSave(this, claim_folder, exclusions_folder);
+		File claim_folder = new File(this.getDataFolder() + File.separator + "data" + File.separator + "claims");
+		File exclusions_folder = new File(this.getDataFolder() + File.separator + "data" + File.separator + "exclusions");
+		this.claim_save = new KDataHandler(this, claim_folder, exclusions_folder);
 		this.block_listener.registerEvents();
 		this.entity_listener.registerEvents();
 		this.player_listener.registerEvents();
@@ -59,7 +59,7 @@ public class KiwiClaims extends JavaPlugin {
 		log("Plugin disabled.");
 	}
 	
-	public KClaimSave getClaimSave() {
+	public KDataHandler getClaimSave() {
 		return this.claim_save;
 	}
 	
