@@ -25,8 +25,10 @@ public class KDataHandler {
 	private final ObjectMapper mapper = new ObjectMapper();
 	private List<KClaim> claims = new ArrayList<KClaim>(), exclusions = new ArrayList<KClaim>();
 	
-	public KDataHandler(KiwiClaims plugin, File claims_folder, File exclusions_folder) {
+	public KDataHandler(KiwiClaims plugin, File data_folder) {
 		this.plugin = plugin;
+		File claims_folder = new File(data_folder + File.separator + "claims");
+		File exclusions_folder = new File(data_folder + File.separator + "exclusions");
 		if (!claims_folder.exists()) claims_folder.mkdirs();
 		if (!exclusions_folder.exists()) exclusions_folder.mkdirs();
 		this.claims_folder = claims_folder;
@@ -35,6 +37,10 @@ public class KDataHandler {
 		module.addSerializer(KClaim.class, new KClaimSerializer());
 		module.addDeserializer(KClaim.class, new KClaimDeserializer(plugin.getServer()));
 		this.mapper.registerModule(module);
+
+	}
+	
+	public void loadClaims() {
 		this.claims = loadList(this.claims_folder);
 		this.exclusions = loadList(this.exclusions_folder);
 		if (this.claims == null) this.claims = new ArrayList<KClaim>();
@@ -54,6 +60,20 @@ public class KDataHandler {
 		saveList(this.exclusions, this.exclusions_folder);
 	}
 	
+	public boolean hasClaim(KClaim claim) {
+		for (KClaim claim_from_list : this.claims) {
+			if (claim.getUUID().equals(claim_from_list.getUUID())) return true;
+		}
+		return false;
+	}
+	
+	public boolean hasExclusion(KClaim claim) {
+		for (KClaim claim_from_list : this.exclusions) {
+			if (claim.getUUID().equals(claim_from_list.getUUID())) return true;
+		}
+		return false;
+	}
+	
 	public KClaim getClaimAt(Location location) {
 		if (this.claims.isEmpty()) return null;
 		for (KClaim claim : this.claims) {
@@ -71,22 +91,24 @@ public class KDataHandler {
 	}
 	
 	public void addClaim(KClaim claim) {
+		if (hasClaim(claim)) return;
 		this.claims.add(claim);
 		try {
 			saveClaim(claim, this.claims_folder);
 		} catch (Exception e) {
 			this.claims.remove(this.claims.indexOf(claim));
-			this.plugin.log("Could not save claim" + claim.getUUID().toString() + ": " + e.getMessage());
+			this.plugin.log("Could not save claim '" + claim.getUUID().toString() + "': " + e.getMessage());
 		}
 	}
 	
 	public void addExclusion(KClaim claim) {
+		if (hasExclusion(claim)) return;
 		this.exclusions.add(claim);
 		try {
 			saveClaim(claim, this.exclusions_folder);
 		} catch (Exception e) {
 			this.exclusions.remove(this.claims.indexOf(claim));
-			this.plugin.log("Could not save exclusion" + claim.getUUID().toString() + ": " + e.getMessage());
+			this.plugin.log("Could not save exclusion '" + claim.getUUID().toString() + "': " + e.getMessage());
 		}
 	}
 	
@@ -112,7 +134,7 @@ public class KDataHandler {
 	
 	public boolean addTrusted(KClaim claim, String name) throws Exception {
 		int i = this.claims.indexOf(claim);
-		if (this.claims.get(i) == null) throw new Exception("Claim " + claim.getUUID().toString() + " not found");
+		if (this.claims.get(i) == null) throw new Exception("Claim '" + claim.getUUID().toString() + "' not found");
 		if (claim.isTrusted(name)) return false;
 		claim.addTrusted(name);
 		saveClaim(claim, this.claims_folder);
@@ -122,7 +144,7 @@ public class KDataHandler {
 	
 	public boolean removeTrusted(KClaim claim, String name) throws Exception {
 		int i = this.claims.indexOf(claim);
-		if (this.claims.get(i) == null) throw new Exception("Claim " + claim.getUUID().toString() + " not found");
+		if (this.claims.get(i) == null) throw new Exception("Claim '" + claim.getUUID().toString() + "' not found");
 		if (!claim.isTrusted(name)) return false;
 		claim.removeTrusted(name);
 		saveClaim(claim, this.claims_folder);
@@ -132,7 +154,7 @@ public class KDataHandler {
 	
 	public boolean setOwner(KClaim claim, String name) throws Exception {
 		int i = this.claims.indexOf(claim);
-		if (this.claims.get(i) == null) throw new Exception("Claim " + claim.getUUID().toString() + " not found");
+		if (this.claims.get(i) == null) throw new Exception("Claim '" + claim.getUUID().toString() + "' not found");
 		if (claim.ownerEquals(name)) return false;
 		claim.setOwnerName(name);
 		saveClaim(claim, this.claims_folder);
@@ -149,11 +171,11 @@ public class KDataHandler {
 			try {
 				claims.add(loadClaim(file));
 			} catch (Exception e) {
-				this.plugin.log("Could not load claim " + folder.getName() + File.separator + file.getName() + ": " + e.getMessage());
+				this.plugin.log("Could not load '" + folder.getName() + File.separator + file.getName() + "': " + e.getMessage());
 				failed_claims++;
 			}
 		}
-		this.plugin.log("Loaded " + claims.size() + " claims in folder " + folder.getName() + ". " + failed_claims + " claims failed to load.");
+		this.plugin.log("Loaded " + claims.size() + " files in '" + folder.getName() + "'. " + failed_claims + " claims failed to load.");
 		return claims;
 	}
 	
@@ -164,11 +186,11 @@ public class KDataHandler {
 			try {
 				saveClaim(claim, folder);
 			} catch (Exception e) {
-				this.plugin.log("Could not save claim " + folder.getName() + File.separator + claim.getUUID() + ".json: " + e.getMessage());
+				this.plugin.log("Could not save '" + folder.getName() + File.separator + claim.getUUID() + ".json': " + e.getMessage());
 				failed_claims++;
 			}
 		}
-		this.plugin.log("Saved " + claims.size() + " claims in folder " + folder.getName() + ". " + failed_claims + " claims failed to load.");
+		this.plugin.log("Saved " + claims.size() + " files in '" + folder.getName() + "'. " + failed_claims + " claims failed to save.");
 	}
 	
 	private KClaim loadClaim(File file) throws JsonParseException, JsonMappingException, IOException {
