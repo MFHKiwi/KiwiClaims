@@ -24,7 +24,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import jdk.internal.org.jline.utils.Log;
 import me.MFHKiwi.KiwiClaims.IO.KDataHandler;
 import me.MFHKiwi.KiwiClaims.IO.KLegacyData;
 import me.MFHKiwi.KiwiClaims.Listeners.KBlockListener;
