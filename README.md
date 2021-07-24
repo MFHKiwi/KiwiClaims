@@ -21,10 +21,10 @@ The generated jar file will be in the `target` directory.
  * Farmland protection
  * Exclusion zones - admin claims whose sole functionality is to stop players from claiming in that area. This is to prevent having other dependencies, like WorldGuard for WorldGuard regions.
  * Claim transferring
+ * Safety mechanism, like GriefPrevention's `/ignoreclaims`, to prevent admins from accidentally causing damage in a claim.
 
 ### What's to be done:
  * Claims that are configurable as to what things are allowed (e.g. allow button presses from outsiders).
- * Safety mechanism, like GriefPrevention's `/ignoreclaims`, to prevent admins from accidentally causing damage in a claim.
  * Create messages file (e.g. `messages.yml`) so that the messages sent by the plugin can be customised.
 
 Thanks to https://chew.pw/ for hosting the correct Bukkit API in their Jenkins repository.
