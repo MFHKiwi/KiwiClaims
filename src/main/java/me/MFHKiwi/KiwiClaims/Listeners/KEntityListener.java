@@ -19,7 +19,6 @@ package me.MFHKiwi.KiwiClaims.Listeners;
 
 import java.util.Iterator;
 
-import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
@@ -42,16 +41,9 @@ import me.MFHKiwi.KiwiClaims.KiwiClaims;
 
 public class KEntityListener extends EntityListener {
 	private final KiwiClaims plugin;
-	private final String[] not_allowed = new String[4];
 	
 	public KEntityListener(KiwiClaims plugin) {
 		this.plugin = plugin;
-		ChatColor colour1 = plugin.getColour(1);
-		ChatColor colour2 = plugin.getColour(2);
-		this.not_allowed[0] = colour1 + "You are not allowed to hurt that here!";
-		this.not_allowed[1] = colour1 + "You are not allowed to build here!";
-		this.not_allowed[2] = colour1 + "Ask the owner of this claim, " + colour2;
-		this.not_allowed[3] = colour1 + ", for permission.";
 	}
 	
 	public void registerEvents() {
@@ -75,10 +67,8 @@ public class KEntityListener extends EntityListener {
 			return;
 		}
 		Player player = (Player) event2.getDamager();
-		if (KiwiClaims.shouldPrevent(player, claim)) {
+		if (this.plugin.shouldPrevent(player, claim)) {
 			event.setCancelled(true);
-			player.sendMessage(this.not_allowed[0]);
-			player.sendMessage(this.not_allowed[2] + claim.getOwnerName() + this.not_allowed[3]);
 		}
 	}
 	
@@ -102,10 +92,8 @@ public class KEntityListener extends EntityListener {
 			return;
 		}
 		Player player = (Player) event2.getRemover();
-		if (KiwiClaims.shouldPrevent(player, claim)) {
+		if (this.plugin.shouldPrevent(player, claim)) {
 			event.setCancelled(true);
-			player.sendMessage(this.not_allowed[1]);
-			player.sendMessage(this.not_allowed[2] + claim.getOwnerName() + this.not_allowed[3]);
 		}
 	}
 	
@@ -113,10 +101,8 @@ public class KEntityListener extends EntityListener {
 		Player player = event.getPlayer();
 		KClaim claim = plugin.getClaimSave().getClaimAt(event.getPainting().getLocation());
 		if (claim == null) return;
-		if (KiwiClaims.shouldPrevent(player, claim)) {
+		if (this.plugin.shouldPrevent(player, claim)) {
 			event.setCancelled(true);
-			player.sendMessage(this.not_allowed[1]);
-			player.sendMessage(this.not_allowed[2] + claim.getOwnerName() + this.not_allowed[3]);
 		}
 	}
 }

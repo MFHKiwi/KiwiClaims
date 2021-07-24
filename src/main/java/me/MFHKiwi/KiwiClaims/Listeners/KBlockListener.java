@@ -17,7 +17,6 @@
  */
 package me.MFHKiwi.KiwiClaims.Listeners;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -39,15 +38,9 @@ import me.MFHKiwi.KiwiClaims.KiwiClaims;
 
 public class KBlockListener extends BlockListener {
 	private final KiwiClaims plugin;
-	private final String[] not_allowed = new String[3];
 	
 	public KBlockListener(KiwiClaims plugin) {
 		this.plugin = plugin;
-		ChatColor colour1 = plugin.getColour(1);
-		ChatColor colour2 = plugin.getColour(2);
-		this.not_allowed[0] = colour1 + "You are not allowed to build here!";
-		this.not_allowed[1] = colour1 + "Ask the owner of this claim, " + colour2;
-		this.not_allowed[2] = colour1 + ", for permission.";
 	}
 	
 	public void registerEvents() {
@@ -62,9 +55,7 @@ public class KBlockListener extends BlockListener {
 	public boolean commonHandler(Location block_location, Player player) {
 		KClaim claim = plugin.getClaimSave().getClaimAt(block_location);
 		if (claim == null) return false;
-		if (!KiwiClaims.shouldPrevent(player, claim)) return false;
-		player.sendMessage(this.not_allowed[0]);
-		player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
+		if (!this.plugin.shouldPrevent(player, claim)) return false;
 		return true;
 	}
 	

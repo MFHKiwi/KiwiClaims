@@ -17,6 +17,8 @@
  */
 package me.MFHKiwi.KiwiClaims.Listeners;
 
+import java.util.Iterator;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -32,11 +34,11 @@ import me.MFHKiwi.KiwiClaims.Utilities.KVisualisation.Type;
 public class KCommandHandler implements CommandExecutor {
 	private final KiwiClaims plugin;
 	private final KPlayerListener listener;
-	private final String[] help_message = new String[11];
+	private final String[] help_message = new String[12];
 	private final String[] owner_set = new String[2];
 	private final String[] plugin_info = new String[2];
 	private final String incorrect_usage, not_player, claim_message, not_in_claim, unclaim_message, not_allowed, 
-	trust_message, already_trusted, untrust_message, already_untrusted, internal_error, no_permission, already_owner, selection_cancelled, no_selection;
+	trust_message, already_trusted, untrust_message, already_untrusted, internal_error, no_permission, already_owner, selection_cancelled, no_selection, overriding, not_overriding;
 	
 	
 	public KCommandHandler(KiwiClaims plugin, KPlayerListener listener) {
@@ -55,6 +57,7 @@ public class KCommandHandler implements CommandExecutor {
 		this.help_message[8] = colour2 + " - " + colour1 + "/kc exclude" + colour2 + ": Create exclusion zone";
 		this.help_message[9] = colour2 + " - " + colour1 + "/kc unexclude" + colour2 + ": Remove exclusion zone";
 		this.help_message[10] = colour2 + " - " + colour1 + "/kc visualise/vis" + colour2 + ": Visualise claim corners";
+		this.help_message[11] = colour2 + " - " + colour1 + "/kc override" + colour2 + ": Override claims";
 		this.incorrect_usage = colour1 + "Incorrect usage. See " + colour2 + "/kc help" + colour1 + ".";
 		this.plugin_info[0] = colour1 + plugin.getDescription().getFullName() + colour2 + " by MFHKiwi";
 		this.plugin_info[1] = colour2 + "This plugin is licensed under the " + colour1 + "GNU GPL v3" + colour2 + ".";
@@ -74,6 +77,8 @@ public class KCommandHandler implements CommandExecutor {
 		this.owner_set[1] = colour2 + ".";
 		this.selection_cancelled = colour2 + "Selection cancelled.";
 		this.no_selection = colour1 + "You have not started a selection.";
+		this.overriding = colour2 + "Overriding claims.";
+		this.not_overriding = colour2 + "No longer overriding claims.";
 	}
 	
 	private boolean shouldPrevent(Player player, KClaim claim) {
@@ -233,6 +238,19 @@ public class KCommandHandler implements CommandExecutor {
 			else {
 				plugin.getClaimSave().removeExclusion(claim);
 				player.sendMessage(this.unclaim_message);
+			}
+			return true;
+		}
+		if (subcommand.equalsIgnoreCase("override")) {
+			if (!plugin.isOverriding(player)) {
+				plugin.getOverrideList().add(player);
+				player.sendMessage(this.overriding);
+			}
+			else for (Iterator<Player> it = plugin.getOverrideList().iterator(); it.hasNext();) {
+				if (it.next() == player) {
+					it.remove();
+					player.sendMessage(not_overriding);
+				}
 			}
 			return true;
 		}

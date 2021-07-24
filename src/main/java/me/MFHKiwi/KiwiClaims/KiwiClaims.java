@@ -18,6 +18,8 @@
 package me.MFHKiwi.KiwiClaims;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
@@ -40,6 +42,13 @@ public class KiwiClaims extends JavaPlugin {
 	private final KPlayerListener player_listener = new KPlayerListener(this);
 	private final KEntityListener entity_listener = new KEntityListener(this);
 	private final KVehicleListener vehicle_listener = new KVehicleListener(this);
+	private final List<Player> overrides = new ArrayList<Player>();
+	private final String[] not_allowed = {
+			colour1 + "You are not allowed to do that here!",
+			colour1 + "Ask the owner of this claim, " + colour2,
+			colour1 + ", for permission.",
+			colour1 + "Use " + colour2 + "/kc override" + colour1 + " to override this."
+	};
 
 	public void onEnable() {
 		log("Plugin enabling...");
@@ -91,12 +100,44 @@ public class KiwiClaims extends JavaPlugin {
 		else return null;
 	}
 	
+	public List<Player> getOverrideList() {
+		return this.overrides;
+	}
+	
+	public boolean isOverriding(Player player) {
+		for (Player player_from_list : this.overrides) {
+			if (player == player_from_list) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	// Common methods that classes use. Not worth creating a class for, so I'm putting it in here.
-	public static boolean shouldPrevent(Player player, KClaim claim) {
+	public boolean shouldPrevent(Player player, KClaim claim, boolean silent) {
 		String player_name = player.getName();
-		if (!claim.ownerEquals(player_name) &&
-			!claim.isTrusted(player_name) &&
-			!player.hasPermission("kc.admin")) return true;
-		else return false;
+		boolean can_build = (claim.ownerEquals(player_name) || claim.isTrusted(player_name));
+		boolean is_admin = player.hasPermission("kc.admin");
+		boolean is_overriding = isOverriding(player);
+		if (!can_build && !is_admin) {
+			if (!silent) {
+				player.sendMessage(this.not_allowed[0]);
+				player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
+			}
+			return true;
+		}
+		else if (!can_build && is_admin && !is_overriding) {
+			if (!silent) {
+				player.sendMessage(this.not_allowed[0]);
+				player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
+				player.sendMessage(this.not_allowed[3]);
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean shouldPrevent(Player player, KClaim claim) {
+		return shouldPrevent(player, claim, false);
 	}
 }

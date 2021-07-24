@@ -51,7 +51,6 @@ public class KPlayerListener extends PlayerListener {
 	private final List<KSelection> selections = new ArrayList<KSelection>();
 	private final String internal_error, world_mismatch, overlap, claim_create, exclusion_create;
 	private final String[] pos_set = new String[4];
-	private final String[] not_allowed = new String[3];
 	private final String[] claim_enter_leave = new String[3];
 	
 	public KPlayerListener(KiwiClaims plugin) {
@@ -67,9 +66,6 @@ public class KPlayerListener extends PlayerListener {
 		this.pos_set[1] = colour2 + " set (" + colour1 + "x: ";
 		this.pos_set[2] = colour1 + ", z: ";
 		this.pos_set[3] = colour2 + ")";
-		this.not_allowed[0] = colour1 + "You are not allowed to use that here!";
-		this.not_allowed[1] = colour1 + "Ask the owner of this claim, " + colour2;
-		this.not_allowed[2] = colour1 + ", for permission.";
 		this.claim_enter_leave[0] = colour2 + "Entering " + colour1;
 		this.claim_enter_leave[1] = colour2 + "Leaving " + colour1;
 		this.claim_enter_leave[2] = colour2 + "'s claim.";
@@ -147,14 +143,12 @@ public class KPlayerListener extends PlayerListener {
 		if (event.getClickedBlock().getState() instanceof ContainerBlock && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			KClaim claim = plugin.getClaimSave().getClaimAt(event.getClickedBlock().getLocation());
 			if (claim == null) return;
-			if (KiwiClaims.shouldPrevent(player, claim)) {
+			if (this.plugin.shouldPrevent(player, claim)) {
 				event.setCancelled(true);
-				player.sendMessage(this.not_allowed[0]);
-				player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
 			}
 			return;
 		}
-		// And it doesn't have an adequate listener for vehicle placement either...
+		// And it doesn't have an adequate one for vehicle placement either...
 		if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) &&
 				player.getItemInHand().getType().equals(Material.BOAT) ||
 				(player.getItemInHand().getType().equals(Material.MINECART) &&
@@ -163,10 +157,8 @@ public class KPlayerListener extends PlayerListener {
 				event.getClickedBlock().getType().equals(Material.POWERED_RAIL)))) {
 			KClaim claim = plugin.getClaimSave().getClaimAt(event.getClickedBlock().getLocation());
 			if (claim == null) return;
-			if (KiwiClaims.shouldPrevent(player, claim)) {
+			if (this.plugin.shouldPrevent(player, claim)) {
 				event.setCancelled(true);
-				player.sendMessage(this.not_allowed[0]);
-				player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
 			}
 			return;
 		}
@@ -174,7 +166,7 @@ public class KPlayerListener extends PlayerListener {
 		if (event.getClickedBlock().getType().equals(Material.SOIL) && event.getAction().equals(Action.PHYSICAL)) {
 			KClaim claim = plugin.getClaimSave().getClaimAt(event.getClickedBlock().getLocation());
 			if (claim == null) return;
-			if (KiwiClaims.shouldPrevent(player, claim)) {
+			if (this.plugin.shouldPrevent(player, claim, true)) {
 				event.setCancelled(true);
 			}
 			return;
@@ -232,10 +224,8 @@ public class KPlayerListener extends PlayerListener {
 		Player player = event.getPlayer();
 		KClaim claim = plugin.getClaimSave().getClaimAt(bed.getLocation());
 		if (claim == null) return;
-		if (KiwiClaims.shouldPrevent(player, claim)) {
+		if (this.plugin.shouldPrevent(player, claim)) {
 			event.setCancelled(true);
-			player.sendMessage(this.not_allowed[0]);
-			player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
 		}
 	}
 	
@@ -243,10 +233,8 @@ public class KPlayerListener extends PlayerListener {
 		Player player = event.getPlayer();
 		KClaim claim = plugin.getClaimSave().getClaimAt(event.getBlockClicked().getLocation());
 		if (claim == null) return;
-		if (KiwiClaims.shouldPrevent(player, claim)) {
+		if (this.plugin.shouldPrevent(player, claim)) {
 			event.setCancelled(true);
-			player.sendMessage(this.not_allowed[0]);
-			player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
 		}
 	}
 	
@@ -254,10 +242,8 @@ public class KPlayerListener extends PlayerListener {
 		Player player = event.getPlayer();
 		KClaim claim = plugin.getClaimSave().getClaimAt(event.getBlockClicked().getLocation());
 		if (claim == null) return;
-		if (KiwiClaims.shouldPrevent(player, claim)) {
+		if (this.plugin.shouldPrevent(player, claim)) {
 			event.setCancelled(true);
-			player.sendMessage(this.not_allowed[0]);
-			player.sendMessage(this.not_allowed[1] + claim.getOwnerName() + this.not_allowed[2]);
 		}
 	}
 	
