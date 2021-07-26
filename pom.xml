@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.MFHKiwi</groupId>
   <artifactId>KiwiClaims</artifactId>
-  <version>1.4.0</version>
+  <version>1.4.1</version>
   <name>KiwiClaims</name>
   <description>A claims plugin for CraftBukkit 1060.</description>
   <build>
@@ -20,9 +20,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.2.4</version>
-        <configuration>
-          <!-- put your configurations here -->
-        </configuration>
         <executions>
           <execution>
             <phase>package</phase>
